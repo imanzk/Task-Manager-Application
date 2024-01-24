@@ -75,3 +75,6 @@ CMakeLists.txt.user*
 build-client-Desktop_Qt_6_6_1_MinGW_64_bit-Debug
 build-server-Desktop_Qt_6_6_1_MinGW_64_bit-Debug
 
+build-server-Desktop_x86_windows_msvc2022_pe_64bit-Debug
+build-client-Desktop_x86_windows_msvc2022_pe_64bit-Debug
+

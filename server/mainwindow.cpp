@@ -12,14 +12,14 @@ MainWindow::MainWindow(QWidget *parent)
         qDebug()<<"Error opening database!";
     //db tables
     QSqlQuery query;
-    query.prepare("CREATE TABLE maha(ids integer primary key, name text)");
+    query.prepare("CREATE TABLE user(id integer primary key autoincrement unique not null, name text , email text , password text , username text unique)");
     query.exec();
-    query.prepare("CREATE TABLE mardom(ids integer primary key, name text)");
-    query.exec();
+    // query.prepare("DELETE FROM people");
+    // query.exec();
     //server
     server = new QTcpServer();
-
-    if(server->listen(QHostAddress::Any, 8080))
+    connect(this , &MainWindow::newMessage , this , &MainWindow::get);
+    if(server->listen(QHostAddress::LocalHost, 8080))
     {
         connect(server, &QTcpServer::newConnection, this, &MainWindow::newConnection);
     }
@@ -82,10 +82,9 @@ void MainWindow::readSocket()
     buffer = buffer.mid(128);
 
     if(fileType=="message"){
-        QString message = QString("%1 :: %2").arg(socket->socketDescriptor()).arg(QString::fromStdString(buffer.toStdString()));
-        // emit newMessage(message);
-        qDebug()<<message;
-        send("hi childs");
+        // QString message = QString("%1 :: %2").arg(socket->socketDescriptor()).arg(QString::fromStdString(buffer.toStdString()));
+        QString message = QString::fromStdString(buffer.toStdString());
+        emit newMessage(message);
     }
 }
 
@@ -124,6 +123,42 @@ void MainWindow::send(QString str)
     {
         sendMessage(socket , str);
         break;
+    }
+}
+
+void MainWindow::get(QString str)
+{
+    QSqlQuery qry;
+    if(str.split(" ").at(0) == "INSERT"){
+        qry.prepare(str);
+        if(!qry.exec()){
+            send("username exists");
+        }
+        else {
+            send("user was added");
+        }
+    }
+    else if(str.split(" ").at(0) == "SELECT"){
+        qry.prepare(str);
+        qry.exec();
+        if(!qry.next()){
+            send("wrong information");
+        }
+        else {
+            send("user was recognized");
+        }
+    }
+    else if(str.split(" ").at(0) == "recovery"){
+        str.remove("recovery");
+        qry.prepare(str);
+        qry.exec();
+        if(!qry.next()){
+            send("wrong email or username");
+        }
+        else{
+            QString pas = qry.value(0).toString();
+            send("passwordRec "+pas);
+        }
     }
 }
 

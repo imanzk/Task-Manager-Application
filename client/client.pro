@@ -10,12 +10,35 @@ CONFIG += c++17
 
 SOURCES += \
     main.cpp \
-    mainwindow.cpp
+    mainwindow.cpp \
+    entrancepage.cpp \
+    recovery.cpp \
+    signuppage.cpp \
+    loginpage.cpp \
+    generics.cpp \
+    home.cpp
+
 
 HEADERS += \
-    mainwindow.h
+    mainwindow.h \
+    entrancepage.h \
+    recovery.h \
+    signuppage.h \
+    loginpage.h \
+    generics.h \
+    home.h
+
+FORMS += \
+    entrancepage.ui \
+    recovery.ui \
+    signuppage.ui \
+    loginpage.ui \
+    home.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
+
+RESOURCES += \
+    resource.qrc

@@ -6,6 +6,6 @@ int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
     MainWindow w;
-    w.send("hello world");
+    w.create(com_type::entrance);
     return a.exec();
 }
