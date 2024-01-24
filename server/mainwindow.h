@@ -35,6 +35,8 @@ private slots:
 
 public:
     void send(QString); // to use
+public slots:
+    void get(QString);
 
 signals:
     void newMessage(QString); // to use
