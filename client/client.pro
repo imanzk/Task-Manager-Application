@@ -12,6 +12,7 @@ SOURCES += \
     main.cpp \
     mainwindow.cpp \
     entrancepage.cpp \
+    organization.cpp \
     recovery.cpp \
     signuppage.cpp \
     loginpage.cpp \
@@ -20,6 +21,7 @@ SOURCES += \
 HEADERS += \
     mainwindow.h \
     entrancepage.h \
+    organization.h \
     recovery.h \
     signuppage.h \
     loginpage.h \
@@ -27,6 +29,7 @@ HEADERS += \
 
 FORMS += \
     entrancepage.ui \
+    organization.ui \
     recovery.ui \
     signuppage.ui \
     loginpage.ui

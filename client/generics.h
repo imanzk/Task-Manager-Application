@@ -37,5 +37,10 @@ public:
     QString id;
 
 };
+class Organization{
+public:
+    QString name;
+    QString role;
+};
 
 #endif // GENERICS_H
