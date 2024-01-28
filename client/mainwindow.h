@@ -11,6 +11,10 @@
 #include <QGuiApplication>
 #include <QScreen>
 #include "recovery.h"
+#include <QDir>
+#include "home.h"
+#include "createorganization.h"
+#include <QThread>
 
 
 
@@ -34,25 +38,35 @@ private slots:
     void readSocket();
     void discardSocket();
     void displayError(QAbstractSocket::SocketError socketError);
+signals:
+    void newMessage(QString);
 public slots:
     //to use
     void get(QString);
 public:
     void send(QString str);
     void create(com_type);
-    void createRec();
-signals:
-    void newMessage(QString);
     //
+    void createRec();
+    void createHome();
+    void createCreateorgan();
 private:
     QWidget *component[SIZE];
     QStackedWidget *stack;
     recovery *rec;
+    home *hom;
+    createorganization *createorgan;
+private:
+    User curUser;
+    Organization curOrgan;
+
 public slots:
     void entranceFunc(Entrance::key_type type);
     void signupFunc(SignUp::key_type type,User);
     void loginFunc(LogIn::key_type type,User);
     void recFunc(User);
+    void homFunc(HOME , Organization);
+    void createorganFunc(Organization);
 };
 
 #endif // MAINWINDOW_H

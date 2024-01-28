@@ -14,8 +14,10 @@ MainWindow::MainWindow(QWidget *parent)
     QSqlQuery query;
     query.prepare("CREATE TABLE user(id integer primary key autoincrement unique not null, name text , email text , password text , username text unique)");
     query.exec();
-    // query.prepare("DELETE FROM people");
-    // query.exec();
+    query.prepare("CREATE TABLE organization(id integer primary key autoincrement unique not null, name text unique, type text , description text)");
+    query.exec();
+    query.prepare("CREATE TABLE organization_member(name text, username text , role text)");
+    query.exec();
     //server
     server = new QTcpServer();
     connect(this , &MainWindow::newMessage , this , &MainWindow::get);
@@ -32,10 +34,10 @@ MainWindow::MainWindow(QWidget *parent)
 
 MainWindow::~MainWindow() {
     db.close();
-    foreach (QTcpSocket* socket, connection_set)
+    foreach (QTcpSocket *memb, connections)
     {
-        socket->close();
-        socket->deleteLater();
+        memb->close();
+        memb->deleteLater();
     }
 
     server->close();
@@ -44,22 +46,22 @@ MainWindow::~MainWindow() {
 
 void MainWindow::newConnection()
 {
-    while (server->hasPendingConnections())
+    while (server->hasPendingConnections()){
         appendToSocketList(server->nextPendingConnection());
+    }
 }
 
 void MainWindow::appendToSocketList(QTcpSocket* socket)
 {
-    connection_set.insert(socket);
+    connections.insert("NULL",socket);
     connect(socket, &QTcpSocket::readyRead, this, &MainWindow::readSocket);
     connect(socket, &QTcpSocket::disconnected, this, &MainWindow::discardSocket);
     connect(socket, &QAbstractSocket::errorOccurred, this, &MainWindow::displayError);
-    // ui->comboBox_receiver->addItem(QString::number(socket->socketDescriptor()));
 }
 
 void MainWindow::readSocket()
 {
-    QTcpSocket* socket = reinterpret_cast<QTcpSocket*>(sender());
+    QTcpSocket* socket = dynamic_cast<QTcpSocket*>(sender());
 
     QByteArray buffer;
 
@@ -68,11 +70,10 @@ void MainWindow::readSocket()
 
     socketStream.startTransaction();
     socketStream >> buffer;
-
     if(!socketStream.commitTransaction())
     {
         QString message = QString("%1 :: Waiting for more data to come..").arg(socket->socketDescriptor());
-        emit newMessage(message);
+        emit newMessage(message , socket);
         return;
     }
 
@@ -82,20 +83,21 @@ void MainWindow::readSocket()
     buffer = buffer.mid(128);
 
     if(fileType=="message"){
-        // QString message = QString("%1 :: %2").arg(socket->socketDescriptor()).arg(QString::fromStdString(buffer.toStdString()));
         QString message = QString::fromStdString(buffer.toStdString());
-        emit newMessage(message);
+        emit newMessage(message , socket);
     }
 }
 
 void MainWindow::discardSocket()
 {
-    QTcpSocket* socket = reinterpret_cast<QTcpSocket*>(sender());
-    QSet<QTcpSocket*>::iterator it = connection_set.find(socket);
-    if (it != connection_set.end()){
-        // displayMessage(QString("INFO :: A client has just left the room").arg(socket->socketDescriptor()));
-        connection_set.remove(*it);
-    }
+    QTcpSocket* socket = dynamic_cast<QTcpSocket*>(sender());
+    QString key = connections.key(socket);
+    connections.remove(key);
+    // QMap<QString,QTcpSocket*>::iterator it = connections.find(key);
+    // if (it != connections.end()){
+    //     // displayMessage(QString("INFO :: A client has just left the room").arg(socket->socketDescriptor()));
+    //     connections.remove(*it);
+    // }
 
     socket->deleteLater();
 }
@@ -117,48 +119,77 @@ void MainWindow::displayError(QAbstractSocket::SocketError socketError)
     }
 }
 
-void MainWindow::send(QString str)
+void MainWindow::send(QString str , QTcpSocket* socket)
 {
-    foreach (QTcpSocket* socket,connection_set)
-    {
-        sendMessage(socket , str);
-        break;
-    }
+    // foreach (QTcpSocket* socket,connection_set)
+    // {
+        // sendMessage(socket , str);
+        // break;
+    // }
+    sendMessage(socket , str);
+
 }
 
-void MainWindow::get(QString str)
+void MainWindow::get(QString str , QTcpSocket* socket)
 {
+    //signup
     QSqlQuery qry;
     if(str.split(" ").at(0) == "INSERT"){
         qry.prepare(str);
         if(!qry.exec()){
-            send("username exists");
+            send("username exists",socket);
         }
         else {
-            send("user was added");
+            send("user was added",socket);
         }
     }
+    //login
     else if(str.split(" ").at(0) == "SELECT"){
         qry.prepare(str);
         qry.exec();
         if(!qry.next()){
-            send("wrong information");
+            send("wrong information",socket);
         }
+        else if(str.split(" ").at(1) == "username")
+            connections.key(socket) = str.split(" ").at(2);
         else {
-            send("user was recognized");
+            send("user was recognized",socket);
         }
     }
+    //recovery
     else if(str.split(" ").at(0) == "recovery"){
-        str.remove("recovery");
+        str.remove(0,9);
         qry.prepare(str);
         qry.exec();
         if(!qry.next()){
-            send("wrong email or username");
+            send("rec wrong email or username",socket);
         }
         else{
             QString pas = qry.value(0).toString();
-            send("passwordRec "+pas);
+            send("passwordRec "+pas,socket);
         }
+    }
+    //createorgan
+    else if(str.split(" ").at(0) == "org"){
+        str.remove(0,4);
+        if(str.split(" ").at(0) == "INSERT"){
+            qry.prepare(str);
+            if(!qry.exec()){
+                send("organization name exists",socket);
+            }else{
+                send("organization was added",socket);
+            }
+        }
+        else {
+            QStringList l = str.split(" ");
+            qry.prepare("INSERT INTO 'organization_member' (username, name, role) VALUES ('"+l[0]+"','"+l[1]+"','manager')");
+            qry.exec();
+        }
+    }
+    //client
+    else if(str.split(" ").at(0) == "client"){
+        str.remove(0 , 7);
+        connections.insert(str,connectingClient);
     }
 }
 

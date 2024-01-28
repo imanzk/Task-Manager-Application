@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>createorganization</class>
+ <widget class="QWidget" name="createorganization">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>700</width>
+    <height>500</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <widget class="QFrame" name="frame">
+   <property name="geometry">
+    <rect>
+     <x>-1</x>
+     <y>-1</y>
+     <width>700</width>
+     <height>500</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">background:&quot;orange&quot;;</string>
+   </property>
+   <property name="frameShape">
+    <enum>QFrame::StyledPanel</enum>
+   </property>
+   <property name="frameShadow">
+    <enum>QFrame::Raised</enum>
+   </property>
+   <widget class="QLineEdit" name="name">
+    <property name="geometry">
+     <rect>
+      <x>130</x>
+      <y>40</y>
+      <width>431</width>
+      <height>41</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>12</pointsize>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background:&quot;#fbd9b1&quot;;
+border:none;</string>
+    </property>
+    <property name="placeholderText">
+     <string>Organization name..</string>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="type">
+    <property name="geometry">
+     <rect>
+      <x>130</x>
+      <y>110</y>
+      <width>431</width>
+      <height>41</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>12</pointsize>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background:&quot;#fbd9b1&quot;;
+border:none;</string>
+    </property>
+    <property name="placeholderText">
+     <string>Organization type..</string>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="description">
+    <property name="geometry">
+     <rect>
+      <x>130</x>
+      <y>180</y>
+      <width>431</width>
+      <height>231</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>12</pointsize>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background:&quot;#fbd9b1&quot;;
+border:none;</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+    </property>
+    <property name="placeholderText">
+     <string>Description..</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="create">
+    <property name="geometry">
+     <rect>
+      <x>480</x>
+      <y>430</y>
+      <width>83</width>
+      <height>29</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>12</pointsize>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background:brown;</string>
+    </property>
+    <property name="text">
+     <string>create</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label">
+    <property name="geometry">
+     <rect>
+      <x>130</x>
+      <y>440</y>
+      <width>231</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <italic>true</italic>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">color : red;
+</string>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+   </widget>
+  </widget>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

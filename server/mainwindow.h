@@ -34,18 +34,18 @@ private slots:
     void sendMessage(QTcpSocket* socket , QString);
 
 public:
-    void send(QString); // to use
+    void send(QString str, QTcpSocket*); // to use
 public slots:
-    void get(QString);
+    void get(QString ,QTcpSocket*);
 
 signals:
-    void newMessage(QString); // to use
+    void newMessage(QString ,QTcpSocket*); // to use
 
 
 private:
-
+    QTcpSocket *connectingClient;
     QTcpServer* server;
-    QSet<QTcpSocket*> connection_set;
+    QMap<QString ,QTcpSocket*> connections;
 
 };
 #endif // MAINWINDOW_H

@@ -10,7 +10,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(socket, &QAbstractSocket::errorOccurred, this, &MainWindow::displayError);
     connect(this , &MainWindow::newMessage , this , &MainWindow::get);
     socket->connectToHost(QHostAddress::LocalHost ,8080);
-    if(!socket->waitForConnected()){
+    if(!socket->waitForConnected(500)){
         qDebug("Error to Connect!");
         exit(EXIT_FAILURE);
     }
@@ -24,8 +24,21 @@ MainWindow::MainWindow(QWidget *parent) :
     QRect screenGeometry = screen->geometry();
     QPoint center = screenGeometry.center();
     stack->move(center - stack->rect().center());
-    // File::createFile();
-    create(com_type::entrance);
+    // run start
+    QDir dir;
+    QString path = dir.path() + "/user.txt";
+    QFileInfo fileInfo(path);
+    if (fileInfo.exists()) {
+        QFile file(path);
+        if (file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+            QTextStream in(&file);
+            in >> curUser.username;
+            file.close();
+            createHome();
+            send("client "+curUser.username);
+        }
+    }else create(com_type::entrance);
+
 }
 
 MainWindow::~MainWindow()
@@ -41,6 +54,7 @@ void MainWindow::readSocket()
     QByteArray buffer;
 
     QDataStream socketStream(socket);
+
     socketStream.setVersion(QDataStream::Qt_5_15);
 
     socketStream.startTransaction();
@@ -144,6 +158,8 @@ void MainWindow::create(com_type type){
                 ,this,SLOT(signupFunc(SignUp::key_type,User)));
         break;
     }
+
+    stack->setFixedSize(1000,600);
     stack->addWidget(*comp);
     stack->setCurrentWidget(*comp);
     stack->show();
@@ -158,6 +174,27 @@ void MainWindow::createRec()
     dialog->show();
     connect(dialog,&QDialog::finished , [&](){stack->setEnabled(true);});
     connect(rec,&recovery::_click , this , &MainWindow::recFunc);
+}
+
+void MainWindow::createHome()
+{
+    hom = new home;
+    stack->setWindowTitle("Home");
+    connect(hom , &home::_click , this , &MainWindow::homFunc);
+    stack->addWidget(hom);
+    stack->setCurrentWidget(hom);
+    stack->show();
+}
+
+void MainWindow::createCreateorgan()
+{
+    stack->setEnabled(false);
+    QDialog *dialog = new QDialog();
+    createorgan = new createorganization(dialog);
+    dialog->move(pos() + (QGuiApplication::primaryScreen()->geometry().center() - geometry().center()));
+    dialog->show();
+    connect(dialog,&QDialog::finished , [&](){stack->setEnabled(true);});
+    connect(createorgan,&createorganization::_click , this , &MainWindow::createorganFunc);
 }
 
 void MainWindow::entranceFunc(Entrance::key_type type)
@@ -188,6 +225,8 @@ void MainWindow::loginFunc(LogIn::key_type type,User data)
         }
         else{
             send("SELECT * FROM user WHERE username = '"+data.username+"' and password = '"+data.password+"'");
+            curUser = data;
+            send("client "+curUser.username);
         }
     }catch(program_exception e){
         qDebug() << e.what();
@@ -199,27 +238,77 @@ void MainWindow::recFunc(User data)
     send("recovery SELECT password FROM user WHERE username = '"+data.username+"' and email = '"+data.email+"'");
 }
 
+void MainWindow::homFunc(HOME t, Organization org)
+{
+    if(t == HOME::create){
+        createCreateorgan();
+    }else if(t == HOME::filter){
+
+    }
+    else if(t == HOME::logout){
+        QDir dir;
+        QString path = dir.path() + "/user.txt";
+        QFile file(path);
+        file.remove();
+        exit(0);
+    }else if(t == HOME::organclick){
+
+    }
+    else if(t == HOME::sort){
+
+    }else if(t == HOME::tasks){
+
+    }
+}
+
+void MainWindow::createorganFunc(Organization org)
+{
+    send("org INSERT INTO organization (name, type, description) VALUES ('"+org.name+"','"+org.type+"','"+org.description+"')");
+    curOrgan = org;
+}
+
 void MainWindow::get(QString str){
+    //signup
     if(str == "username exists"){
         auto comp = dynamic_cast<SignUpPage*>(component[com_type::signup]);
         comp->displayMessage(str);
     }else if(str == "user was added"){
         create(com_type::entrance);
     }
-    //
+    //login
     else if(str == "wrong information"){
         auto comp = dynamic_cast<LogInPage*>(component[com_type::login]);
         comp->displayMessage(str);
     }else if(str == "user was recognized"){
-        create(com_type::entrance);
+        QDir dir;
+        QString path = dir.path() + "/user.txt";
+        QFile file(path);
+        if (file.open(QIODevice::WriteOnly | QIODevice::Text)) {
+            // Write the text to the file
+            QTextStream out(&file);
+            out << curUser.username << "\n";
+            file.close();
+        }
+        send("SELECT username "+curUser.username);
+        createHome();
     }
-    //
-    else if(str == "wrong email or username"){
+    //recovery
+    else if(str == "rec wrong email or username"){
+        str.remove("rec ");
         rec->display(str);
     }else if(str.split(" ").at(0) == "passwordRec"){
         str.remove("passwordRec ");
         rec->display("your password: "+str);
     }
+    //createorgan
+    else if(str == "organization name exists"){
+        createorgan->display(str);
+    }else if(str == "organization was added"){
+        send("org "+curUser.username+" "+curOrgan.name);
+        auto com = dynamic_cast<QDialog*>(createorgan->parent());
+        com->close();
+    }
+
 }
 
 
