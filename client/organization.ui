@@ -6,86 +6,278 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1200</width>
+    <width>1000</width>
     <height>600</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Form</string>
   </property>
-  <widget class="QFrame" name="frame">
+  <widget class="QLabel" name="label">
    <property name="geometry">
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1200</width>
+     <width>1000</width>
      <height>600</height>
     </rect>
    </property>
+   <property name="font">
+    <font>
+     <italic>true</italic>
+     <bold>true</bold>
+    </font>
+   </property>
    <property name="styleSheet">
-    <string notr="true">background:&quot;#C0C0C0&quot;;</string>
+    <string notr="true">background:&quot;#c0c0c0&quot;;</string>
    </property>
-   <property name="frameShape">
-    <enum>QFrame::StyledPanel</enum>
+   <property name="text">
+    <string/>
    </property>
-   <property name="frameShadow">
-    <enum>QFrame::Raised</enum>
+  </widget>
+  <widget class="QScrollArea" name="projects">
+   <property name="geometry">
+    <rect>
+     <x>589</x>
+     <y>50</y>
+     <width>361</width>
+     <height>501</height>
+    </rect>
    </property>
-   <widget class="QScrollArea" name="scrollArea">
+   <property name="styleSheet">
+    <string notr="true">background:&quot;#c0c0c0&quot;;
+border:none;</string>
+   </property>
+   <property name="widgetResizable">
+    <bool>true</bool>
+   </property>
+   <widget class="QWidget" name="scrollAreaWidgetContents_3">
     <property name="geometry">
      <rect>
       <x>0</x>
       <y>0</y>
-      <width>1200</width>
-      <height>600</height>
+      <width>361</width>
+      <height>501</height>
      </rect>
     </property>
-    <property name="widgetResizable">
-     <bool>true</bool>
-    </property>
-    <widget class="QWidget" name="scrollAreaWidgetContents">
-     <property name="geometry">
-      <rect>
-       <x>0</x>
-       <y>0</y>
-       <width>1198</width>
-       <height>598</height>
-      </rect>
-     </property>
-     <widget class="QPushButton" name="pushButton">
-      <property name="geometry">
-       <rect>
-        <x>670</x>
-        <y>20</y>
-        <width>500</width>
-        <height>80</height>
-       </rect>
-      </property>
-      <property name="styleSheet">
-       <string notr="true">background:&quot;#7F7F7F&quot;;</string>
-      </property>
-      <property name="text">
-       <string>PushButton</string>
-      </property>
-     </widget>
-     <widget class="QPushButton" name="pushButton_2">
-      <property name="geometry">
-       <rect>
-        <x>150</x>
-        <y>20</y>
-        <width>500</width>
-        <height>80</height>
-       </rect>
-      </property>
-      <property name="styleSheet">
-       <string notr="true">background:&quot;#7092BE&quot;;</string>
-      </property>
-      <property name="text">
-       <string>PushButton</string>
-      </property>
-     </widget>
-    </widget>
    </widget>
+  </widget>
+  <widget class="QScrollArea" name="teams">
+   <property name="geometry">
+    <rect>
+     <x>180</x>
+     <y>50</y>
+     <width>361</width>
+     <height>501</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">border:none;
+background:&quot;#c0c0c0&quot;</string>
+   </property>
+   <property name="widgetResizable">
+    <bool>true</bool>
+   </property>
+   <widget class="QWidget" name="scrollAreaWidgetContents_4">
+    <property name="geometry">
+     <rect>
+      <x>0</x>
+      <y>0</y>
+      <width>361</width>
+      <height>501</height>
+     </rect>
+    </property>
+   </widget>
+  </widget>
+  <widget class="QPushButton" name="home">
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>60</y>
+     <width>141</width>
+     <height>41</height>
+    </rect>
+   </property>
+   <property name="cursor">
+    <cursorShape>PointingHandCursor</cursorShape>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">background:orange;
+border:none;
+border-radius:10px;
+color:white;</string>
+   </property>
+   <property name="text">
+    <string>Home</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="about">
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>130</y>
+     <width>141</width>
+     <height>41</height>
+    </rect>
+   </property>
+   <property name="cursor">
+    <cursorShape>PointingHandCursor</cursorShape>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">background:red;
+border:none;
+border-radius:10px;
+color:white;</string>
+   </property>
+   <property name="text">
+    <string>About</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="createTeam">
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>200</y>
+     <width>141</width>
+     <height>41</height>
+    </rect>
+   </property>
+   <property name="cursor">
+    <cursorShape>PointingHandCursor</cursorShape>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">background:red;
+border:none;
+border-radius:10px;
+color:white;</string>
+   </property>
+   <property name="text">
+    <string>Create team</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="createProject">
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>270</y>
+     <width>141</width>
+     <height>41</height>
+    </rect>
+   </property>
+   <property name="cursor">
+    <cursorShape>PointingHandCursor</cursorShape>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">background:red;
+border:none;
+border-radius:10px;
+color:white;</string>
+   </property>
+   <property name="text">
+    <string>Create project</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_2">
+   <property name="geometry">
+    <rect>
+     <x>180</x>
+     <y>20</y>
+     <width>101</width>
+     <height>20</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <italic>true</italic>
+     <bold>true</bold>
+    </font>
+   </property>
+   <property name="text">
+    <string>teams</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_3">
+   <property name="geometry">
+    <rect>
+     <x>590</x>
+     <y>20</y>
+     <width>101</width>
+     <height>20</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <italic>true</italic>
+     <bold>true</bold>
+    </font>
+   </property>
+   <property name="text">
+    <string>projects</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="filterproject">
+   <property name="geometry">
+    <rect>
+     <x>780</x>
+     <y>20</y>
+     <width>81</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <property name="cursor">
+    <cursorShape>PointingHandCursor</cursorShape>
+   </property>
+   <property name="text">
+    <string>filter</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="sortproject">
+   <property name="geometry">
+    <rect>
+     <x>870</x>
+     <y>20</y>
+     <width>81</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <property name="cursor">
+    <cursorShape>PointingHandCursor</cursorShape>
+   </property>
+   <property name="text">
+    <string>sort</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="filterteam">
+   <property name="geometry">
+    <rect>
+     <x>370</x>
+     <y>20</y>
+     <width>81</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <property name="cursor">
+    <cursorShape>PointingHandCursor</cursorShape>
+   </property>
+   <property name="text">
+    <string>filter</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="sortteam">
+   <property name="geometry">
+    <rect>
+     <x>460</x>
+     <y>20</y>
+     <width>81</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <property name="cursor">
+    <cursorShape>PointingHandCursor</cursorShape>
+   </property>
+   <property name="text">
+    <string>sort</string>
+   </property>
   </widget>
  </widget>
  <resources/>

@@ -21,11 +21,10 @@ void createorganization::display(QString str)
 void createorganization::on_create_clicked()
 {
     Organization org;
-    int size = 3;
+    int size = 2;
     QLineEdit *data[size];
     data[0]=ui->name;
     data[1]=ui->type;
-    data[2]=ui->description;
 
     for(int i = 0;i < size;i++){
         if(data[i]->text().isEmpty())
@@ -36,7 +35,7 @@ void createorganization::on_create_clicked()
     }
     org.name = data[0]->text();
     org.type = data[1]->text();
-    org.description = data[2]->text();
+    org.description = ui->description->toPlainText();
 
     emit _click(org);
 }

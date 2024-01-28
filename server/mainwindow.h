@@ -13,6 +13,7 @@
 #include <QStandardPaths>
 #include <QTcpServer>
 #include <QTcpSocket>
+#include <QThread>
 
 class MainWindow : public QMainWindow
 {
@@ -43,7 +44,6 @@ signals:
 
 
 private:
-    QTcpSocket *connectingClient;
     QTcpServer* server;
     QMap<QString ,QTcpSocket*> connections;
 

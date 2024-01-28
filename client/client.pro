@@ -12,24 +12,34 @@ SOURCES += \
     main.cpp \
     mainwindow.cpp \
     entrancepage.cpp \
+    organization.cpp \
     recovery.cpp \
     signuppage.cpp \
     loginpage.cpp \
-    generics.cpp
+    generics.cpp \
+    home.cpp \
+    createorganization.cpp
 
 HEADERS += \
+    createorganization.h \
     mainwindow.h \
     entrancepage.h \
+    organization.h \
     recovery.h \
     signuppage.h \
     loginpage.h \
-    generics.h
+    generics.h \
+    home.h
 
 FORMS += \
+    createorganization.ui \
     entrancepage.ui \
     recovery.ui \
     signuppage.ui \
-    loginpage.ui
+    loginpage.ui \
+    home.ui \
+    organization.ui
+
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

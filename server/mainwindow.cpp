@@ -23,6 +23,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(this , &MainWindow::newMessage , this , &MainWindow::get);
     if(server->listen(QHostAddress::LocalHost, 8080))
     {
+        qDebug() << "server is listening..";
         connect(server, &QTcpServer::newConnection, this, &MainWindow::newConnection);
     }
     else
@@ -54,6 +55,7 @@ void MainWindow::newConnection()
 void MainWindow::appendToSocketList(QTcpSocket* socket)
 {
     connections.insert("NULL",socket);
+    qDebug() << "new connection";
     connect(socket, &QTcpSocket::readyRead, this, &MainWindow::readSocket);
     connect(socket, &QTcpSocket::disconnected, this, &MainWindow::discardSocket);
     connect(socket, &QAbstractSocket::errorOccurred, this, &MainWindow::displayError);
@@ -62,43 +64,15 @@ void MainWindow::appendToSocketList(QTcpSocket* socket)
 void MainWindow::readSocket()
 {
     QTcpSocket* socket = dynamic_cast<QTcpSocket*>(sender());
-
-    QByteArray buffer;
-
-    QDataStream socketStream(socket);
-    socketStream.setVersion(QDataStream::Qt_5_15);
-
-    socketStream.startTransaction();
-    socketStream >> buffer;
-    if(!socketStream.commitTransaction())
-    {
-        QString message = QString("%1 :: Waiting for more data to come..").arg(socket->socketDescriptor());
-        emit newMessage(message , socket);
-        return;
-    }
-
-    QString header = buffer.mid(0,128);
-    QString fileType = header.split(",")[0].split(":")[1];
-
-    buffer = buffer.mid(128);
-
-    if(fileType=="message"){
-        QString message = QString::fromStdString(buffer.toStdString());
-        emit newMessage(message , socket);
-    }
+    emit newMessage(socket->readAll() , socket);
 }
 
 void MainWindow::discardSocket()
 {
     QTcpSocket* socket = dynamic_cast<QTcpSocket*>(sender());
     QString key = connections.key(socket);
+    qDebug() << "disconnected " << key;
     connections.remove(key);
-    // QMap<QString,QTcpSocket*>::iterator it = connections.find(key);
-    // if (it != connections.end()){
-    //     // displayMessage(QString("INFO :: A client has just left the room").arg(socket->socketDescriptor()));
-    //     connections.remove(*it);
-    // }
-
     socket->deleteLater();
 }
 
@@ -121,17 +95,38 @@ void MainWindow::displayError(QAbstractSocket::SocketError socketError)
 
 void MainWindow::send(QString str , QTcpSocket* socket)
 {
-    // foreach (QTcpSocket* socket,connection_set)
-    // {
-        // sendMessage(socket , str);
-        // break;
-    // }
     sendMessage(socket , str);
+}
 
+void MainWindow::sendMessage(QTcpSocket* socket , QString str)
+{
+    if(socket)
+    {
+        if(socket->isOpen())
+        {
+            QDataStream socketStream(socket);
+            socketStream.setVersion(QDataStream::Qt_5_15);
+
+            QByteArray header;
+            header.prepend(QString("fileType:message,fileName:null,fileSize:%1;").arg(str.size()).toUtf8());
+            header.resize(128);
+
+            QByteArray byteArray = str.toUtf8();
+            byteArray.prepend(header);
+
+            socketStream.setVersion(QDataStream::Qt_5_15);
+            socketStream << byteArray;
+        }
+        else
+            qDebug("Socket doesn't seem to be opened");
+    }
+    else
+        qDebug("Not connected");
 }
 
 void MainWindow::get(QString str , QTcpSocket* socket)
 {
+    qDebug() << "get:" << str;
     //signup
     QSqlQuery qry;
     if(str.split(" ").at(0) == "INSERT"){
@@ -150,8 +145,6 @@ void MainWindow::get(QString str , QTcpSocket* socket)
         if(!qry.next()){
             send("wrong information",socket);
         }
-        else if(str.split(" ").at(1) == "username")
-            connections.key(socket) = str.split(" ").at(2);
         else {
             send("user was recognized",socket);
         }
@@ -189,36 +182,26 @@ void MainWindow::get(QString str , QTcpSocket* socket)
     //client
     else if(str.split(" ").at(0) == "client"){
         str.remove(0 , 7);
-        connections.insert(str,connectingClient);
+        connections.insert(str,socket);
+        qDebug() << "connected as " << str;
     }
-}
-
-void MainWindow::sendMessage(QTcpSocket* socket , QString str)
-{
-    if(socket)
-    {
-        if(socket->isOpen())
-        {
-            QDataStream socketStream(socket);
-            socketStream.setVersion(QDataStream::Qt_5_15);
-
-            QByteArray header;
-            header.prepend(QString("fileType:message,fileName:null,fileSize:%1;").arg(str.size()).toUtf8());
-            header.resize(128);
-
-            QByteArray byteArray = str.toUtf8();
-            byteArray.prepend(header);
-
-            socketStream.setVersion(QDataStream::Qt_5_15);
-            socketStream << byteArray;
+    //home
+    else if(str.split(" ").at(0) == "home"){
+        str.remove(0,5);
+        qry.prepare(str);
+        qry.exec();
+        //
+        QString q = "home";
+        QString name;
+        QString role;
+        while(qry.next()){
+            name = qry.value("name").toString();
+            role = qry.value("role").toString();
+            q = q + " " + name + " " + role;
         }
-        else
-            qDebug("Socket doesn't seem to be opened");
+        send(q , socket);
     }
-    else
-        qDebug("Not connected");
 }
-
 
 
 

@@ -37,5 +37,27 @@ public:
     QString id;
 
 };
+class Organization{
+public:
+    QString name;
+    QString role;
+    QString description;
+    QString type;
+    Organization(QString _name , QString _role){
+        name = _name; role = _role;
+    }
+    Organization() = default;
+};
+class Group{
+public:
+    QString name;
+    QString role;
+    QString description;
+    QString kind; // team or project
+    Group(QString _name , QString _role){
+        name = _name; role = _role;
+    }
+    Group() = default;
+};
 
 #endif // GENERICS_H

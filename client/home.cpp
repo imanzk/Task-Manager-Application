@@ -29,9 +29,11 @@ void home::display(Organization org)
     connect(button , &QPushButton::clicked , [&](){
         emit _click(HOME::organclick , org);
     });
-    button->setStyleSheet("background:"+color+"; border-radius:'25px'; width:750px; height:130px; font-size:30px; text-align:left; padding-left:30px;");
-    // button->setText("LG                                                                                   10 member");
+    button->setStyleSheet("background:"+color+"; border-radius:'25px'; width:650px;"
+                            " height:130px; font-size:30px; text-align:left; padding-left:30px;"
+                            "");
     button->setText(org.name);
+    button->setCursor(Qt::PointingHandCursor);
     scrollLayout->addWidget(button);
     ui->scroll->setWidget(scrollWidget);
 }

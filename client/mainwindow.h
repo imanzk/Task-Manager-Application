@@ -15,6 +15,7 @@
 #include "home.h"
 #include "createorganization.h"
 #include <QThread>
+#include <QMutex>
 
 
 
@@ -68,5 +69,4 @@ public slots:
     void homFunc(HOME , Organization);
     void createorganFunc(Organization);
 };
-
 #endif // MAINWINDOW_H

@@ -1,4 +1,5 @@
 #include "mainwindow.h"
+QMutex mute;
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent)
@@ -14,6 +15,7 @@ MainWindow::MainWindow(QWidget *parent) :
         qDebug("Error to Connect!");
         exit(EXIT_FAILURE);
     }
+    qDebug()<<"connected";
     //
     for(int i = 0; i < SIZE ; i++)
         component[i] = nullptr;
@@ -33,9 +35,10 @@ MainWindow::MainWindow(QWidget *parent) :
         if (file.open(QIODevice::ReadOnly | QIODevice::Text)) {
             QTextStream in(&file);
             in >> curUser.username;
-            file.close();
-            createHome();
             send("client "+curUser.username);
+            QThread::msleep(10);
+            createHome();
+            file.close();
         }
     }else create(com_type::entrance);
 
@@ -106,27 +109,8 @@ void MainWindow::displayError(QAbstractSocket::SocketError socketError)
 
 void MainWindow::send(QString str)
 {
-    if(socket)
-    {
-        if(socket->isOpen())
-        {
-            QDataStream socketStream(socket);
-            socketStream.setVersion(QDataStream::Qt_5_15);
-
-            QByteArray header;
-            header.prepend(QString("fileType:message,fileName:null,fileSize:%1;").arg(str.size()).toUtf8());
-            header.resize(128);
-
-            QByteArray byteArray = str.toUtf8();
-            byteArray.prepend(header);
-
-            socketStream << byteArray;
-        }
-        else
-            qDebug("Socket doesn't seem to be opened");
-    }
-    else
-        qDebug("Not connected");
+    socket->write(str.toUtf8().constData());
+    socket->waitForBytesWritten(100);
 }
 
 void MainWindow::create(com_type type){
@@ -184,6 +168,8 @@ void MainWindow::createHome()
     stack->addWidget(hom);
     stack->setCurrentWidget(hom);
     stack->show();
+    //
+    send("home SELECT * FROM 'organization_member' WHERE username = '"+curUser.username+"'");
 }
 
 void MainWindow::createCreateorgan()
@@ -226,7 +212,6 @@ void MainWindow::loginFunc(LogIn::key_type type,User data)
         else{
             send("SELECT * FROM user WHERE username = '"+data.username+"' and password = '"+data.password+"'");
             curUser = data;
-            send("client "+curUser.username);
         }
     }catch(program_exception e){
         qDebug() << e.what();
@@ -268,6 +253,7 @@ void MainWindow::createorganFunc(Organization org)
 }
 
 void MainWindow::get(QString str){
+    qDebug() <<"received:"<< str;
     //signup
     if(str == "username exists"){
         auto comp = dynamic_cast<SignUpPage*>(component[com_type::signup]);
@@ -289,7 +275,8 @@ void MainWindow::get(QString str){
             out << curUser.username << "\n";
             file.close();
         }
-        send("SELECT username "+curUser.username);
+        send("client "+curUser.username);
+        QThread::msleep(10);
         createHome();
     }
     //recovery
@@ -307,8 +294,19 @@ void MainWindow::get(QString str){
         send("org "+curUser.username+" "+curOrgan.name);
         auto com = dynamic_cast<QDialog*>(createorgan->parent());
         com->close();
+        createHome();
     }
-
+    //myget
+    //home
+    else if(str.split(" ").at(0) == "home"){
+        str.remove(0 , 5);
+        if(str.size()==0) return;
+        QStringList l = str.split(" ");
+        for(int i = 0 ; i < l.size() ; i += 2){
+            Organization org(l[i] , l[i+1]);
+            hom->display(org);
+        }
+    }
 }
 
 
