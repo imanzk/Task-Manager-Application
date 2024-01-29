@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>998</width>
+    <width>1000</width>
     <height>600</height>
    </rect>
   </property>
@@ -38,9 +38,9 @@
     <property name="geometry">
      <rect>
       <x>210</x>
-      <y>50</y>
+      <y>40</y>
       <width>731</width>
-      <height>501</height>
+      <height>521</height>
      </rect>
     </property>
     <property name="cursor" stdset="0">
@@ -58,7 +58,7 @@
        <x>0</x>
        <y>0</y>
        <width>731</width>
-       <height>501</height>
+       <height>521</height>
       </rect>
      </property>
     </widget>
@@ -178,6 +178,9 @@ color:white;</string>
     </property>
     <property name="cursor">
      <cursorShape>PointingHandCursor</cursorShape>
+    </property>
+    <property name="styleSheet">
+     <string notr="true"/>
     </property>
     <property name="text">
      <string>filter</string>

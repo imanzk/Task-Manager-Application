@@ -8,8 +8,9 @@
 
 namespace Ui {
 class home;
-}
 enum HOME{create , tasks , logout , organclick , filter , sort};
+}
+using Ui::HOME;
 
 
 class home : public QWidget
@@ -17,14 +18,15 @@ class home : public QWidget
     Q_OBJECT
     QVBoxLayout *scrollLayout;
     QWidget *scrollWidget;
-    QString filter = "member";
+    QString filter = "all";
+    QVector<Organization> list;
 signals:
     void _click(HOME ,Organization = Organization());
 public:
     explicit home(QWidget *parent = nullptr);
     ~home();
     void display(Organization);
-
+    void displayButton(Organization);
 private slots:
     void on_logout_clicked();
 
@@ -35,6 +37,9 @@ private slots:
     void on_filter_clicked();
 
     void on_sort_clicked();
+public slots:
+
+    void on_organclick();
 
 private:
     Ui::home *ui;

@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>createorganization</class>
- <widget class="QWidget" name="createorganization">
+ <class>aboutproject</class>
+ <widget class="QWidget" name="aboutproject">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>518</width>
+    <width>519</width>
     <height>460</height>
    </rect>
   </property>
@@ -18,12 +18,12 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>520</width>
-     <height>460</height>
+     <width>521</width>
+     <height>461</height>
     </rect>
    </property>
    <property name="styleSheet">
-    <string notr="true">background:&quot;orange&quot;;</string>
+    <string notr="true">background:&quot;#bbbcb6&quot;;</string>
    </property>
    <property name="frameShape">
     <enum>QFrame::StyledPanel</enum>
@@ -55,7 +55,7 @@ padding-left:10;</string>
      <string/>
     </property>
     <property name="placeholderText">
-     <string>organization name..</string>
+     <string>project name..</string>
     </property>
    </widget>
    <widget class="QLineEdit" name="type">
@@ -79,7 +79,7 @@ border-radius:15;
 padding-left:10;</string>
     </property>
     <property name="placeholderText">
-     <string>organization type..</string>
+     <string>project goal..</string>
     </property>
    </widget>
    <widget class="QPushButton" name="create">
@@ -100,11 +100,11 @@ padding-left:10;</string>
      <cursorShape>PointingHandCursor</cursorShape>
     </property>
     <property name="styleSheet">
-     <string notr="true">background:brown;
+     <string notr="true">background:green;
 border-radius:10;</string>
     </property>
     <property name="text">
-     <string>create</string>
+     <string>Edit</string>
     </property>
    </widget>
    <widget class="QLabel" name="label">

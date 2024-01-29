@@ -16,6 +16,9 @@
 #include "createorganization.h"
 #include <QThread>
 #include <QMutex>
+#include "organization.h"
+#include "createteam.h"
+#include "createproject.h"
 
 
 
@@ -42,24 +45,33 @@ private slots:
 signals:
     void newMessage(QString);
 public slots:
-    //to use
     void get(QString);
 public:
     void send(QString str);
     void create(com_type);
     //
+    //to use
     void createRec();
     void createHome();
     void createCreateorgan();
+    void createOrgan();
+    void createCreateTeam();
+    void createCreateProject();
 private:
     QWidget *component[SIZE];
     QStackedWidget *stack;
     recovery *rec;
     home *hom;
     createorganization *createorgan;
+    organization *organ;
+    createteam *createmyteam;
+    createproject *createmyproject;
 private:
     User curUser;
     Organization curOrgan;
+    Group curGroup;
+    Team curTeam;
+    Project curProject;
 
 public slots:
     void entranceFunc(Entrance::key_type type);
@@ -68,5 +80,8 @@ public slots:
     void recFunc(User);
     void homFunc(HOME , Organization);
     void createorganFunc(Organization);
+    void organFunc(ORGAN , Group);
+    void createteamFunc(Team);
+    void createprojectFunc(Project);
 };
 #endif // MAINWINDOW_H

@@ -46,7 +46,13 @@ public:
     Organization(QString _name , QString _role){
         name = _name; role = _role;
     }
+    Organization(QString _name){
+        name = _name;
+    }
     Organization() = default;
+    bool operator==(const Organization other){
+        return name == other.name;
+    }
 };
 class Group{
 public:
@@ -54,10 +60,39 @@ public:
     QString role;
     QString description;
     QString kind; // team or project
+    QString department;
     Group(QString _name , QString _role){
         name = _name; role = _role;
     }
     Group() = default;
+};
+class Team{
+public:
+    QString name;
+    QString role;
+    QString description;
+    QString department;
+    Team(QString _name , QString _role){
+        name = _name; role = _role;
+    }
+    Team(QString _name){
+        name = _name;
+    }
+    Team() = default;
+};
+class Project{
+public:
+    QString name;
+    QString role;
+    QString description;
+    QString goal;
+    Project(QString _name , QString _role){
+        name = _name; role = _role;
+    }
+    Project(QString _name){
+        name = _name;
+    }
+    Project() = default;
 };
 
 #endif // GENERICS_H

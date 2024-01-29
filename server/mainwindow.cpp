@@ -18,6 +18,14 @@ MainWindow::MainWindow(QWidget *parent)
     query.exec();
     query.prepare("CREATE TABLE organization_member(name text, username text , role text)");
     query.exec();
+    query.prepare("CREATE TABLE team(id integer primary key autoincrement unique not null, name text unique, department text , description text)");
+    query.exec();
+    query.prepare("CREATE TABLE project(id integer primary key autoincrement unique not null, name text unique, goal text , description text)");
+    query.exec();
+    query.prepare("CREATE TABLE organization_team(team text , organization text)");
+    query.exec();
+    query.prepare("CREATE TABLE organization_project(project text , organization text)");
+    query.exec();
     //server
     server = new QTcpServer();
     connect(this , &MainWindow::newMessage , this , &MainWindow::get);
@@ -126,6 +134,7 @@ void MainWindow::sendMessage(QTcpSocket* socket , QString str)
 
 void MainWindow::get(QString str , QTcpSocket* socket)
 {
+    QThread::msleep(1);
     qDebug() << "get:" << str;
     //signup
     QSqlQuery qry;
@@ -198,6 +207,68 @@ void MainWindow::get(QString str , QTcpSocket* socket)
             name = qry.value("name").toString();
             role = qry.value("role").toString();
             q = q + " " + name + " " + role;
+        }
+        send(q , socket);
+    }
+    //team
+    else if(str.split(" ").at(0) == "team"){
+        str.remove(0,5);
+        if(str.split(" ").at(0) == "INSERT"){
+            qry.prepare(str);
+            if(!qry.exec()){
+                send("team name exists",socket);
+            }else{
+                send("team was added",socket);
+            }
+        }
+        else {
+            QStringList l = str.split(" ");
+            qry.prepare("INSERT INTO 'organization_team' (team, organization) VALUES ('"+l[0]+"','"+l[1]+"')");
+            qry.exec();
+        }
+    }
+    //project
+    else if(str.split(" ").at(0) == "project"){
+        str.remove(0,8);
+        if(str.split(" ").at(0) == "INSERT"){
+            qry.prepare(str);
+            if(!qry.exec()){
+                send("project name exists",socket);
+            }else{
+                send("project was added",socket);
+            }
+        }
+        else {
+            QStringList l = str.split(" ");
+            qry.prepare("INSERT INTO 'organization_project' (project, organization) VALUES ('"+l[0]+"','"+l[1]+"')");
+            qry.exec();
+        }
+    }
+    //getteam
+    else if(str.split(" ").at(0) == "getteam"){
+        str.remove(0,8);
+        qry.prepare(str);
+        qry.exec();
+        //
+        QString q = "getteam";
+        QString team;
+        while(qry.next()){
+            team = qry.value("team").toString();
+            q = q + " " + team;
+        }
+        send(q , socket);
+    }
+    //getproject
+    else if(str.split(" ").at(0) == "getproject"){
+        str.remove(0, 11);
+        qry.prepare(str);
+        qry.exec();
+        //
+        QString q = "getproject";
+        QString project;
+        while(qry.next()){
+            project = qry.value("project").toString();
+            q = q + " " + project;
         }
         send(q , socket);
     }

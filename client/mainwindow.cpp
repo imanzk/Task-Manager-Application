@@ -36,7 +36,7 @@ MainWindow::MainWindow(QWidget *parent) :
             QTextStream in(&file);
             in >> curUser.username;
             send("client "+curUser.username);
-            QThread::msleep(10);
+            QThread::msleep(1);
             createHome();
             file.close();
         }
@@ -183,6 +183,41 @@ void MainWindow::createCreateorgan()
     connect(createorgan,&createorganization::_click , this , &MainWindow::createorganFunc);
 }
 
+void MainWindow::createOrgan()
+{
+    organ = new organization;
+    stack->setWindowTitle(curOrgan.name + " organization");
+    connect(organ , &organization::_click , this , &MainWindow::organFunc);
+    stack->addWidget(organ);
+    stack->setCurrentWidget(organ);
+    stack->show();
+    //
+    send("getteam SELECT team FROM 'organization_team' WHERE organization = '"+curOrgan.name+"'");
+    QThread::msleep(1);
+}
+
+void MainWindow::createCreateTeam()
+{
+    stack->setEnabled(false);
+    QDialog *dialog = new QDialog();
+    createmyteam = new createteam(dialog);
+    dialog->move(pos() + (QGuiApplication::primaryScreen()->geometry().center() - geometry().center()));
+    dialog->show();
+    connect(dialog,&QDialog::finished , [&](){stack->setEnabled(true);});
+    connect(createmyteam,&createteam::_click , this , &MainWindow::createteamFunc);
+}
+
+void MainWindow::createCreateProject()
+{
+    stack->setEnabled(false);
+    QDialog *dialog = new QDialog();
+    createmyproject = new createproject(dialog);
+    dialog->move(pos() + (QGuiApplication::primaryScreen()->geometry().center() - geometry().center()));
+    dialog->show();
+    connect(dialog,&QDialog::finished , [&](){stack->setEnabled(true);});
+    connect(createmyproject,&createproject::_click , this , &MainWindow::createprojectFunc);
+}
+
 void MainWindow::entranceFunc(Entrance::key_type type)
 {
     type==Entrance::login?create(com_type::login)
@@ -228,7 +263,7 @@ void MainWindow::homFunc(HOME t, Organization org)
     if(t == HOME::create){
         createCreateorgan();
     }else if(t == HOME::filter){
-
+        //
     }
     else if(t == HOME::logout){
         QDir dir;
@@ -237,10 +272,11 @@ void MainWindow::homFunc(HOME t, Organization org)
         file.remove();
         exit(0);
     }else if(t == HOME::organclick){
-
+        curOrgan = org;
+        createOrgan();
     }
     else if(t == HOME::sort){
-
+        //
     }else if(t == HOME::tasks){
 
     }
@@ -252,7 +288,32 @@ void MainWindow::createorganFunc(Organization org)
     curOrgan = org;
 }
 
+void MainWindow::organFunc(ORGAN type, Group)
+{
+    if(ORGAN::home == type){
+        createHome();
+    }
+    else if(ORGAN::createTeam == type){
+        createCreateTeam();
+    }else if(ORGAN::creatProject == type){
+        createCreateProject();
+    }
+}
+
+void MainWindow::createteamFunc(Team team)
+{
+    send("team INSERT INTO team (name, department, description) VALUES ('"+team.name+"','"+team.department+"','"+team.description+"')");
+    curTeam = team;
+}
+
+void MainWindow::createprojectFunc(Project project)
+{
+    send("project INSERT INTO project (name, goal, description) VALUES ('"+project.name+"','"+project.goal+"','"+project.description+"')");
+    curProject = project;
+}
+
 void MainWindow::get(QString str){
+    QThread::msleep(1);
     qDebug() <<"received:"<< str;
     //signup
     if(str == "username exists"){
@@ -276,7 +337,7 @@ void MainWindow::get(QString str){
             file.close();
         }
         send("client "+curUser.username);
-        QThread::msleep(10);
+        QThread::msleep(1);
         createHome();
     }
     //recovery
@@ -296,7 +357,6 @@ void MainWindow::get(QString str){
         com->close();
         createHome();
     }
-    //myget
     //home
     else if(str.split(" ").at(0) == "home"){
         str.remove(0 , 5);
@@ -305,6 +365,45 @@ void MainWindow::get(QString str){
         for(int i = 0 ; i < l.size() ; i += 2){
             Organization org(l[i] , l[i+1]);
             hom->display(org);
+        }
+    }
+    //createteam
+    else if(str == "team name exists"){
+        createmyteam->display(str);
+    }else if(str == "team was added"){
+        send("team "+curTeam.name+" "+curOrgan.name);
+        auto com = dynamic_cast<QDialog*>(createmyteam->parent());
+        com->close();
+        createOrgan();
+    }
+    //createproject
+    else if(str == "project name exists"){
+        createmyproject->display(str);
+    }else if(str == "project was added"){
+        send("project "+curProject.name+" "+curOrgan.name);
+        auto com = dynamic_cast<QDialog*>(createmyproject->parent());
+        com->close();
+        createOrgan();
+    }
+    //getteam
+    else if(str.split(" ").at(0) == "getteam"){
+        str.remove(0 , 8);
+        if(str.size()==0) return;
+        QStringList l = str.split(" ");
+        for(int i = 0 ; i < l.size() ; i += 1){
+            Team team(l[i]);
+            organ->display(team);
+        }
+        send("getproject SELECT project FROM 'organization_project' WHERE organization = '"+curOrgan.name+"'");
+    }
+    //getproject
+    else if(str.split(" ").at(0) == "getproject"){
+        str.remove(0 , 11);
+        if(str.size()==0) return;
+        QStringList l = str.split(" ");
+        for(int i = 0 ; i < l.size() ; i += 1){
+            Project project(l[i]);
+            organ->display(project);
         }
     }
 }

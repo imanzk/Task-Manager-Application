@@ -17,31 +17,42 @@ organization::~organization()
     delete ui;
 }
 
-void organization::displayTeam(Group g)
+void organization::display(Team t)
+{
+    listteam.push_back(t);
+    displayTeam(t);
+    ui->filterteam->setText("filter");
+}
+
+void organization::display(Project p)
+{
+    listproject.push_back(p);
+    displayProject(p);
+    ui->filterteam->setText("filter");
+}
+
+void organization::displayTeam(Team t)
 {
     QPushButton *button = new QPushButton(scrollWidgetTeam);
-    connect(button , &QPushButton::clicked , [&](){
-        emit _click(ORGAN::teamclick , g);
-    });
-    button->setStyleSheet("background:#7092be; border-radius:'25px'; width:450px;"
-                            " height:130px; font-size:30px; text-align:left; padding-left:30px;"
-                            "");
-    button->setText(g.name);
+    connect(button , &QPushButton::clicked , this , &organization::on_teamclick);
+    curTeam = t;
+    button->setStyleSheet("background:#7092be; border-radius:'25px'; width:280px;"
+                          " height:100px; font-size:30px; text-align:left; padding-left:30px;"
+                          "color:white;");
+    button->setText(t.name);
     button->setCursor(Qt::PointingHandCursor);
     scrollLayoutTeam->addWidget(button);
     ui->teams->setWidget(scrollWidgetTeam);
 }
 
-void organization::displayProject(Group g)
+void organization::displayProject(Project p)
 {
     QPushButton *button = new QPushButton(scrollWidgetProject);
-    connect(button , &QPushButton::clicked , [&](){
-        emit _click(ORGAN::projectclick , g);
-    });
-    button->setStyleSheet("background:#7f7f7f; border-radius:'25px'; width:450px;"
-                          " height:130px; font-size:30px; text-align:left; padding-left:30px;"
-                          "");
-    button->setText(g.name);
+    connect(button , &QPushButton::clicked , this , &organization::on_projectclick);
+    button->setStyleSheet("background:#818181; border-radius:'25px'; width:280px;"
+                          " height:100px; font-size:30px; text-align:left; padding-left:30px;"
+                          "color:white;");
+    button->setText(p.name);
     button->setCursor(Qt::PointingHandCursor);
     scrollLayoutProject->addWidget(button);
     ui->projects->setWidget(scrollWidgetProject);
@@ -93,5 +104,15 @@ void organization::on_filterproject_clicked()
 void organization::on_sortproject_clicked()
 {
     emit _click(ORGAN::sortproject);
+}
+
+void organization::on_teamclick()
+{
+
+}
+
+void organization::on_projectclick()
+{
+
 }
 

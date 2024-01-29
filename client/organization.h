@@ -8,10 +8,11 @@
 
 namespace Ui {
 class organization;
-}
-
 enum ORGAN{createTeam , creatProject , about , home , teamclick , projectclick , sortteam
-,sortproject , filterproject , filterteam};
+             ,sortproject , filterproject , filterteam};
+}
+using Ui::ORGAN;
+
 
 class organization : public QWidget
 {
@@ -23,14 +24,20 @@ class organization : public QWidget
     QVBoxLayout *scrollLayoutProject;
     QWidget *scrollWidgetProject;
     QString filterProject = "member";
+    QVector<Team> listteam;
+    QVector<Project> listproject;
+    Team curTeam;
+    Project curProject;
 signals:
     void _click(ORGAN , Group=Group());
 public:
     explicit organization(QWidget *parent = nullptr);
     ~organization();
 public:
-    void displayTeam(Group);
-    void displayProject(Group);
+    void display(Team);
+    void display(Project);
+    void displayTeam(Team);
+    void displayProject(Project);
 private slots:
 
 
@@ -50,7 +57,9 @@ private slots:
     void on_filterproject_clicked();
 
     void on_sortproject_clicked();
-
+public slots:
+    void on_teamclick();
+    void on_projectclick();
 private:
     Ui::organization *ui;
 };
