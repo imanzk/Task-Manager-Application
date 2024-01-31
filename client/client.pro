@@ -12,12 +12,14 @@ SOURCES += \
     aboutorganization.cpp \
     aboutproject.cpp \
     aboutteam.cpp \
+    addmember.cpp \
     archived.cpp \
     createproject.cpp \
     createteam.cpp \
     main.cpp \
     mainwindow.cpp \
     entrancepage.cpp \
+    membersetting.cpp \
     membertask.cpp \
     organization.cpp \
     project.cpp \
@@ -34,12 +36,14 @@ HEADERS += \
     aboutorganization.h \
     aboutproject.h \
     aboutteam.h \
+    addmember.h \
     archived.h \
     createorganization.h \
     createproject.h \
     createteam.h \
     mainwindow.h \
     entrancepage.h \
+    membersetting.h \
     membertask.h \
     organization.h \
     project.h \
@@ -55,11 +59,13 @@ FORMS += \
     aboutorganization.ui \
     aboutproject.ui \
     aboutteam.ui \
+    addmember.ui \
     archived.ui \
     createorganization.ui \
     createproject.ui \
     createteam.ui \
     entrancepage.ui \
+    membersetting.ui \
     membertask.ui \
     project.ui \
     recovery.ui \

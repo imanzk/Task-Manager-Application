@@ -35,7 +35,7 @@ private slots:
     void sendMessage(QTcpSocket* socket , QString);
 
 public:
-    void send(QString str, QTcpSocket*); // to use
+    void send(QString str, QTcpSocket* = nullptr); // to use
 public slots:
     void get(QString ,QTcpSocket*);
 

@@ -19,12 +19,18 @@
 #include "organization.h"
 #include "createteam.h"
 #include "createproject.h"
-
-
+#include <QFuture>
+#include <QtConcurrent/QtConcurrent>
+#include "aboutorganization.h"
 
 namespace admin{
 enum com_type{entrance , signup , login , recovery};
-} using admin::com_type;
+enum PLACE{
+    null , create_recovery , about_organization , about_project , about_team , add_member , archived ,
+    create_organization , create_project , create_team , home , member_setting , member_task ,
+    organization , project , tasks , team
+};
+} using admin::com_type , admin::PLACE;
 #define SIZE 3
 
 class MainWindow : public QMainWindow
@@ -35,6 +41,7 @@ private:
     QTcpSocket* socket;
 
 public:
+    PLACE place = PLACE::null;
     explicit MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
@@ -57,6 +64,7 @@ public:
     void createOrgan();
     void createCreateTeam();
     void createCreateProject();
+    void createAboutorganization();
 private:
     QWidget *component[SIZE];
     QStackedWidget *stack;
@@ -66,6 +74,7 @@ private:
     organization *organ;
     createteam *createmyteam;
     createproject *createmyproject;
+    aboutorganization *aboutorgan;
 private:
     User curUser;
     Organization curOrgan;
@@ -83,5 +92,13 @@ public slots:
     void organFunc(ORGAN , Group);
     void createteamFunc(Team);
     void createprojectFunc(Project);
+    void aboutorganFunc(ABOUTORGAN, Organization);
 };
+
+class repeat : public QThread , public MainWindow{
+public:
+    void run();
+};
+
+
 #endif // MAINWINDOW_H

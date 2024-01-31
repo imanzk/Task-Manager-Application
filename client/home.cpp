@@ -8,7 +8,6 @@ home::home(QWidget *parent)
     ui->setupUi(this);
     scrollWidget = new QWidget(this);
     scrollLayout = new QVBoxLayout(scrollWidget);
-
 }
 
 home::~home()
@@ -25,6 +24,8 @@ void home::display(Organization org)
 
 void home::displayButton(Organization org)
 {
+    scrollLayout->setAlignment(Qt::AlignTop);
+    //
     QString color;
     if(org.role=="manager")
         color = "#FF4040";

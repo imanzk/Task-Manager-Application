@@ -35,6 +35,15 @@ public:
     QString name;
     QString email;
     QString id;
+    QString organization;
+    QString role;
+    QString team;
+    QString project;
+public:
+    User(QString _username){
+        username = _username;
+    }
+    User()=default;
 
 };
 class Organization{
@@ -61,8 +70,8 @@ public:
     QString description;
     QString kind; // team or project
     QString department;
-    Group(QString _name , QString _role){
-        name = _name; role = _role;
+    Group(QString _name , QString _kind){
+        name = _name; kind = _kind;
     }
     Group() = default;
 };

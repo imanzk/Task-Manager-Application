@@ -34,9 +34,9 @@
    <widget class="QPushButton" name="edit">
     <property name="geometry">
      <rect>
-      <x>180</x>
+      <x>150</x>
       <y>526</y>
-      <width>131</width>
+      <width>101</width>
       <height>41</height>
      </rect>
     </property>
@@ -61,7 +61,7 @@ border-radius:10;</string>
      <rect>
       <x>34</x>
       <y>525</y>
-      <width>131</width>
+      <width>101</width>
       <height>41</height>
      </rect>
     </property>
@@ -81,7 +81,7 @@ border-radius:10;</string>
      <string>Delete</string>
     </property>
    </widget>
-   <widget class="QScrollArea" name="scrollArea">
+   <widget class="QScrollArea" name="scroll">
     <property name="geometry">
      <rect>
       <x>500</x>
@@ -157,7 +157,8 @@ border-radius:10;</string>
     <property name="styleSheet">
      <string notr="true">background:blue;
 border-radius:25;
-padding-bottom:10;</string>
+padding-bottom:10;
+color:white;</string>
     </property>
     <property name="text">
      <string>+</string>
@@ -179,6 +180,28 @@ padding-bottom:10;</string>
     </property>
     <property name="flat">
      <bool>false</bool>
+    </property>
+   </widget>
+   <widget class="QLabel" name="error">
+    <property name="geometry">
+     <rect>
+      <x>280</x>
+      <y>522</y>
+      <width>191</width>
+      <height>41</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <italic>true</italic>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">color:red;</string>
+    </property>
+    <property name="text">
+     <string/>
     </property>
    </widget>
   </widget>

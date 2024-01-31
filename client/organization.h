@@ -28,6 +28,11 @@ class organization : public QWidget
     QVector<Project> listproject;
     Team curTeam;
     Project curProject;
+    QString filterteam = "all";
+    QString filterproject = "all";
+public:
+    Organization curOrgan;
+
 signals:
     void _click(ORGAN , Group=Group());
 public:

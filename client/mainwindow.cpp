@@ -1,5 +1,4 @@
 #include "mainwindow.h"
-QMutex mute;
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent)
@@ -151,6 +150,7 @@ void MainWindow::create(com_type type){
 
 void MainWindow::createRec()
 {
+
     stack->setEnabled(false);
     QDialog *dialog = new QDialog();
     rec = new recovery(dialog);
@@ -162,6 +162,7 @@ void MainWindow::createRec()
 
 void MainWindow::createHome()
 {
+    place = PLACE::home;
     hom = new home;
     stack->setWindowTitle("Home");
     connect(hom , &home::_click , this , &MainWindow::homFunc);
@@ -174,6 +175,7 @@ void MainWindow::createHome()
 
 void MainWindow::createCreateorgan()
 {
+    place = PLACE::create_organization;
     stack->setEnabled(false);
     QDialog *dialog = new QDialog();
     createorgan = new createorganization(dialog);
@@ -185,7 +187,9 @@ void MainWindow::createCreateorgan()
 
 void MainWindow::createOrgan()
 {
+    place = PLACE::organization;
     organ = new organization;
+    organ->curOrgan = curOrgan;
     stack->setWindowTitle(curOrgan.name + " organization");
     connect(organ , &organization::_click , this , &MainWindow::organFunc);
     stack->addWidget(organ);
@@ -198,6 +202,7 @@ void MainWindow::createOrgan()
 
 void MainWindow::createCreateTeam()
 {
+    place = PLACE::create_team;
     stack->setEnabled(false);
     QDialog *dialog = new QDialog();
     createmyteam = new createteam(dialog);
@@ -209,6 +214,7 @@ void MainWindow::createCreateTeam()
 
 void MainWindow::createCreateProject()
 {
+    place = PLACE::create_project;
     stack->setEnabled(false);
     QDialog *dialog = new QDialog();
     createmyproject = new createproject(dialog);
@@ -216,6 +222,20 @@ void MainWindow::createCreateProject()
     dialog->show();
     connect(dialog,&QDialog::finished , [&](){stack->setEnabled(true);});
     connect(createmyproject,&createproject::_click , this , &MainWindow::createprojectFunc);
+}
+
+void MainWindow::createAboutorganization()
+{
+    place = PLACE::about_organization;
+    aboutorgan = new aboutorganization;
+    aboutorgan->displayOrgan(curOrgan);
+    stack->setWindowTitle("about "+ curOrgan.name);
+    connect(aboutorgan , &aboutorganization::_click , this , &MainWindow::aboutorganFunc);
+    stack->addWidget(aboutorgan);
+    stack->setCurrentWidget(aboutorgan);
+    stack->show();
+    //
+    send("getmemberorg SELECT * FROM 'organization_member' WHERE name = '"+curOrgan.name+"'");
 }
 
 void MainWindow::entranceFunc(Entrance::key_type type)
@@ -297,6 +317,8 @@ void MainWindow::organFunc(ORGAN type, Group)
         createCreateTeam();
     }else if(ORGAN::creatProject == type){
         createCreateProject();
+    }else if(ORGAN::about){
+        createAboutorganization();
     }
 }
 
@@ -310,6 +332,24 @@ void MainWindow::createprojectFunc(Project project)
 {
     send("project INSERT INTO project (name, goal, description) VALUES ('"+project.name+"','"+project.goal+"','"+project.description+"')");
     curProject = project;
+}
+
+void MainWindow::aboutorganFunc(ABOUTORGAN t,Organization org)
+{
+    if(t == ABOUTORGAN::addmember){
+
+    }
+    else if(t == ABOUTORGAN::back){
+        createOrgan();
+    }
+    else if(t == ABOUTORGAN::edit){
+        send("editorgan UPDATE organization SET type='"+org.type+"' , description='"+org.description+"' WHERE name='"+org.name+"'");
+    }
+    else if(t == ABOUTORGAN::addmember){
+
+    }else if(t == ABOUTORGAN::remove){
+        send("removeorgan "+curOrgan.name);
+    }
 }
 
 void MainWindow::get(QString str){
@@ -359,6 +399,7 @@ void MainWindow::get(QString str){
     }
     //home
     else if(str.split(" ").at(0) == "home"){
+        if(place != PLACE::home)return;
         str.remove(0 , 5);
         if(str.size()==0) return;
         QStringList l = str.split(" ");
@@ -387,18 +428,23 @@ void MainWindow::get(QString str){
     }
     //getteam
     else if(str.split(" ").at(0) == "getteam"){
+        if(place != PLACE::organization)return;
         str.remove(0 , 8);
+        send("getproject SELECT project FROM 'organization_project' WHERE organization = '"+curOrgan.name+"'");
+        //
         if(str.size()==0) return;
         QStringList l = str.split(" ");
         for(int i = 0 ; i < l.size() ; i += 1){
             Team team(l[i]);
             organ->display(team);
         }
-        send("getproject SELECT project FROM 'organization_project' WHERE organization = '"+curOrgan.name+"'");
     }
     //getproject
     else if(str.split(" ").at(0) == "getproject"){
+        if(place != PLACE::organization)return;
         str.remove(0 , 11);
+        send("getrole SELECT * FROM 'organization_member' WHERE name = '"+curOrgan.name+"' AND username ='"+curUser.username+"'");
+        //
         if(str.size()==0) return;
         QStringList l = str.split(" ");
         for(int i = 0 ; i < l.size() ; i += 1){
@@ -406,11 +452,60 @@ void MainWindow::get(QString str){
             organ->display(project);
         }
     }
+    //getmemberorg
+    else if(str.split(" ").at(0) == "getmemberorg"){
+        if(place != PLACE::about_organization)return;
+        str.remove(0 , 13);
+        send("curorgan SELECT * FROM organization WHERE name='"+curOrgan.name+"'");
+        //
+        if(str.size()==0) return;
+        QStringList l = str.split(" ");
+        for(int i = 0 ; i < l.size() ; i += 2){
+            User u;
+            u.username = l[0];
+            u.role = l[1];
+            aboutorgan->display(u);
+        }
+    }
+    //editorgan
+    else if(str.split(" ").at(0) == "editorgan")
+    {
+        if(place != PLACE::about_organization)return;
+        createAboutorganization();
+    }
+    //getrole
+    else if(str.split(" ").at(0) == "getrole"){
+        str.remove(0,8);
+        curOrgan.role = str;
+    }
+    //curorgan
+    else if(str.split(" ").at(0)== "curorgan"){
+        str.remove(0,9);
+        QStringList l = str.split(",");
+        if(l.size()==0) return;
+        if(l.size()>=1)curOrgan.name = l[0];
+        if(l.size()>=2)curOrgan.type = l[1];
+        if(l.size()>=3)curOrgan.description = l[2];
+        aboutorgan->displayOrgan(curOrgan);
+    }
+    //removeorgan
+    else if(str == "removeorgan"){
+        createHome();
+    }
+    //
 }
 
-
-
-
-
-
-
+void repeat::run()
+{
+    while(1){
+        QThread::msleep(2000);
+        if(place == admin::home)
+            createHome();
+        else if(place == admin::organization)
+            createOrgan();
+        else if(place == admin::organization)
+            createOrgan();
+        else if(place == admin::about_organization)
+            createAboutorganization();
+    }
+}

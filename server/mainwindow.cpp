@@ -26,6 +26,7 @@ MainWindow::MainWindow(QWidget *parent)
     query.exec();
     query.prepare("CREATE TABLE organization_project(project text , organization text)");
     query.exec();
+    //
     //server
     server = new QTcpServer();
     connect(this , &MainWindow::newMessage , this , &MainWindow::get);
@@ -103,7 +104,13 @@ void MainWindow::displayError(QAbstractSocket::SocketError socketError)
 
 void MainWindow::send(QString str , QTcpSocket* socket)
 {
-    sendMessage(socket , str);
+    if(socket)
+        sendMessage(socket , str);
+    else {
+        for(auto x:connections){
+            sendMessage(x , str);
+        }
+    }
 }
 
 void MainWindow::sendMessage(QTcpSocket* socket , QString str)
@@ -208,7 +215,7 @@ void MainWindow::get(QString str , QTcpSocket* socket)
             role = qry.value("role").toString();
             q = q + " " + name + " " + role;
         }
-        send(q , socket);
+        send(q,socket);
     }
     //team
     else if(str.split(" ").at(0) == "team"){
@@ -256,7 +263,7 @@ void MainWindow::get(QString str , QTcpSocket* socket)
             team = qry.value("team").toString();
             q = q + " " + team;
         }
-        send(q , socket);
+        send(q,socket);
     }
     //getproject
     else if(str.split(" ").at(0) == "getproject"){
@@ -270,7 +277,79 @@ void MainWindow::get(QString str , QTcpSocket* socket)
             project = qry.value("project").toString();
             q = q + " " + project;
         }
-        send(q , socket);
+        send(q,socket);
+    }
+    //getmemberorg
+    else if(str.split(" ").at(0) == "getmemberorg"){
+        str.remove(0,13);
+        qry.prepare(str);
+        qry.exec();
+        //
+        QString q = "getmemberorg";
+        QString member;
+        while(qry.next()){
+            member = qry.value("username").toString();
+            member = member + " " + qry.value("role").toString();
+            q = q + " " + member;
+        }
+        send(q,socket);
+    }
+    //editorgan
+    else if(str.split(" ").at(0) == "editorgan"){
+        str.remove(0,10);
+        qry.prepare(str);
+        qry.exec();
+        //
+        send("editorgan",socket);
+    }
+    //getrole
+    else if(str.split(" ").at(0) == "getrole"){
+        str.remove(0,8);
+        qry.prepare(str);
+        qry.exec();
+        qry.next();
+        send("getrole "+qry.value("role").toString(),socket);
+    }
+    //curorgan
+    else if(str.split(" ").at(0) == "curorgan"){
+        str.remove(0,9);
+        qry.prepare(str);
+        qry.exec();
+        qry.next();
+        QString name = qry.value("name").toString();
+        QString type = qry.value("type").toString();
+        QString description = qry.value("description").toString();
+        send("curorgan " + name +"," + type + "," + description , socket);
+    }
+    //removeorgan
+    else if(str.split(" ").at(0) == "removeorgan"){
+        str.remove(0,12);
+        qry.prepare("DELETE FROM organization WHERE name='"+str+"'");
+        qry.exec();
+        qry.prepare("DELETE FROM 'organization_member' WHERE name='"+str+"'");
+        qry.exec();
+        //
+        qry.prepare("SELECT * FROM 'organization_team' WHERE organization='"+str+"'");
+        qry.exec();
+        while(qry.next()){
+            QString team = qry.value("team").toString();
+            QSqlQuery qry2;
+            qry2.prepare("DELETE FROM team WHERE name='"+team+"'");
+            qry2.exec();
+        }
+        qry.prepare("SELECT * FROM 'organization_project' WHERE organization='"+str+"'");
+        qry.exec();
+        while(qry.next()){
+            QString project = qry.value("project").toString();
+            QSqlQuery qry2;
+            qry2.prepare("DELETE FROM project WHERE name='"+project+"'");
+            qry2.exec();
+        }
+        qry.prepare("DELETE FROM 'organization_project' WHERE organization='"+str+"'");
+        qry.exec();
+        qry.prepare("DELETE FROM 'organization_team' WHERE organization='"+str+"'");
+        qry.exec();
+        send("removeorgan",socket);
     }
 }
 
