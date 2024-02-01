@@ -2,21 +2,33 @@
 #define ADDMEMBER_H
 
 #include <QWidget>
+#include "generics.h"
+#include <QVBoxLayout>
 
 namespace Ui {
-class addmember;
+class addmemberClass;
+enum ADDMEMBER{
+    search , userclick
+};
 }
+using Ui::ADDMEMBER;
 
-class addmember : public QWidget
+class addmemberClass : public QWidget
 {
     Q_OBJECT
-
+    QVBoxLayout *scrollLayout;
+    QWidget *scrollWidget;
 public:
-    explicit addmember(QWidget *parent = nullptr);
-    ~addmember();
-
+    explicit addmemberClass(QWidget *parent = nullptr);
+    ~addmemberClass();
+    void display(QString);
+signals:
+    void _click(ADDMEMBER , User);
+private slots:
+    void on_search_textEdited(const QString &arg1);
+    void on_userclick();
 private:
-    Ui::addmember *ui;
+    Ui::addmemberClass *ui;
 };
 
 #endif // ADDMEMBER_H

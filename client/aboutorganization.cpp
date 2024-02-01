@@ -54,11 +54,23 @@ void aboutorganization::displayMember(User u)
     button->setStyleSheet("background:#ffc800; border-radius:'2px'; width:300px;"
                           " height:50px; font-size:20px; text-align:left; padding-left:30px;"
                           "color:black;");
-    if(u.role == "member")
-        button->setText(u.username);
-    else if(u.role == "admin" || u.role == "manager")
+
+    if(u.role == "admin" || u.role == "manager")
         button->setText(u.role+": "+u.username);
-    button->setCursor(Qt::PointingHandCursor);
+    else
+        button->setText(u.username);
+    if(curOrgan.role == "manager"){
+        if(u.role == "manager"){
+            button->setCursor(Qt::ArrowCursor);
+            button->setDisabled(true);
+        }
+        else{
+            button->setCursor(Qt::PointingHandCursor);
+            button->setDisabled(false);
+        }
+    }else if(curOrgan.role == "admin" || curOrgan.role == "member"){
+        button->setDisabled(true);
+    }
     scrollLayout->addWidget(button);
     ui->scroll->setWidget(scrollWidget);
 }
@@ -76,7 +88,18 @@ void aboutorganization::on_back_clicked()
 
 void aboutorganization::on_memberclicked()
 {
-
+    QPushButton* buttonSender = qobject_cast<QPushButton*>(sender());
+    Organization org;
+    QStringList l = buttonSender->text().split(" ");
+    if(l.size()==1){
+        org.username = l[0];
+        org.role = "member";
+    }else if(l.size()==2){
+        l[0].remove(":");
+        org.role = l[0];
+        org.username = l[1];
+    }
+    emit _click(ABOUTORGAN::memberclick , org);
 }
 
 

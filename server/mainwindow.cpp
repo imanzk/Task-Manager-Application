@@ -63,7 +63,7 @@ void MainWindow::newConnection()
 
 void MainWindow::appendToSocketList(QTcpSocket* socket)
 {
-    connections.insert("NULL",socket);
+    connections.push_back(socket);
     qDebug() << "new connection";
     connect(socket, &QTcpSocket::readyRead, this, &MainWindow::readSocket);
     connect(socket, &QTcpSocket::disconnected, this, &MainWindow::discardSocket);
@@ -79,9 +79,13 @@ void MainWindow::readSocket()
 void MainWindow::discardSocket()
 {
     QTcpSocket* socket = dynamic_cast<QTcpSocket*>(sender());
-    QString key = connections.key(socket);
-    qDebug() << "disconnected " << key;
-    connections.remove(key);
+    qDebug() << "disconnected";
+    for(int i = 0; i < connections.size() ; i++){
+        if(connections[i] == socket){
+            connections.erase(connections.begin() + i);
+            break;
+        }
+    }
     socket->deleteLater();
 }
 
@@ -141,7 +145,7 @@ void MainWindow::sendMessage(QTcpSocket* socket , QString str)
 
 void MainWindow::get(QString str , QTcpSocket* socket)
 {
-    QThread::msleep(1);
+    // QThread::msleep(1);
     qDebug() << "get:" << str;
     //signup
     QSqlQuery qry;
@@ -197,9 +201,9 @@ void MainWindow::get(QString str , QTcpSocket* socket)
     }
     //client
     else if(str.split(" ").at(0) == "client"){
-        str.remove(0 , 7);
-        connections.insert(str,socket);
-        qDebug() << "connected as " << str;
+        // str.remove(0 , 7);
+        // connections.insert(str,socket);
+        // qDebug() << "connected as " << str;
     }
     //home
     else if(str.split(" ").at(0) == "home"){
@@ -349,8 +353,56 @@ void MainWindow::get(QString str , QTcpSocket* socket)
         qry.exec();
         qry.prepare("DELETE FROM 'organization_team' WHERE organization='"+str+"'");
         qry.exec();
-        send("removeorgan",socket);
+        send("removeorgan "+str);
     }
+    //addmember
+    else if(str.split(" ").at(0) == "addmember"){
+        str.remove(0 , 10);
+        qry.prepare(str);
+        qry.exec();
+    }
+    //searchmember
+    else if(str.split(" ").at(0) == "searchmember"){
+        str.remove(0,13);
+        QStringList l = str.split(" ");
+        qry.prepare("SELECT * FROM user WHERE username LIKE '"+l[0]+"%'");
+        qry.exec();
+        QString q = "searchmember";
+        while(qry.next()){
+            QSqlQuery qry2;
+            QString username = qry.value("username").toString();
+            QString name = l[1];
+            qry2.prepare("SELECT * FROM organization_member WHERE username='"+username+"' AND name='"+name+"'");
+            qry2.exec();
+            if(qry2.next()) continue;
+            else {
+                q = q + " " + username;
+            }
+        }
+        send(q , socket);
+    }
+    //removememberorg
+    else if(str.split(" ").at(0) == "removememberorg"){
+        str.remove(0,16);
+        qry.prepare(str);
+        qry.exec();
+        send("removememberorg" ,socket);
+    }
+    //disgradeorg
+    else if(str.split(" ").at(0) == "disgradeorg"){
+        str.remove(0,12);
+        qry.prepare(str);
+        qry.exec();
+        send("disgradeorg" , socket);
+    }
+    //upgradeorg
+    else if(str.split(" ").at(0) == "upgradeorg"){
+        str.remove(0,11);
+        qry.prepare(str);
+        qry.exec();
+        send("upgradeorg" ,socket);
+    }
+    //
 }
 
 

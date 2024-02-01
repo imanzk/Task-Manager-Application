@@ -19,7 +19,6 @@ void home::display(Organization org)
 {
     list.push_back(org);
     displayButton(org);
-    ui->filter->setText("filter");
 }
 
 void home::displayButton(Organization org)
@@ -35,9 +34,11 @@ void home::displayButton(Organization org)
         color = "#99D9EA";
     QPushButton *button = new QPushButton(scrollWidget);
     connect(button , &QPushButton::clicked , this , &home::on_organclick);
-    button->setStyleSheet("background:"+color+"; border-radius:'25px'; width:650px;"
-                                                  " height:130px; font-size:30px; text-align:left; padding-left:30px;"
-                                                  "");
+    button->setStyleSheet("QPushButton{margin:5px;background:"+color+"; border-radius:'25px'; width:650px;"
+                                                  " height:100px; font-size:40px; text-align:left; padding-left:30px;"
+                                                  "color:white;}"
+                                                  "QPushButton:hover{"
+                                                  "color:"+color+";background:white;}");
     button->setText(org.name);
     button->setCursor(Qt::PointingHandCursor);
     scrollLayout->addWidget(button);
@@ -68,15 +69,17 @@ void home::on_filter_clicked()
     //
     if(filter == "all"){
         filter = "member";
+        ui->filter->setStyleSheet("background:#e4f1f7;color:black;border-radius:4px;");
     }else if(filter == "member"){
         filter = "admin";
+        ui->filter->setStyleSheet("background:#e4f1f7;color:black;border-radius:4px;");
     }else if(filter == "admin"){
         filter = "manager";
+        ui->filter->setStyleSheet("background:#e4f1f7;color:black;border-radius:4px;");
     }else if(filter == "manager"){
         filter = "all";
+        ui->filter->setStyleSheet("background:blue;color:white;border-radius:4px;");
     }
-    ui->filter->setText("filter:"+filter);
-    //
     delete scrollLayout;
     delete scrollWidget;
     scrollWidget = new QWidget(this);
@@ -100,6 +103,11 @@ void home::on_sort_clicked()
 {
     emit _click(HOME::sort);
     //
+    sort = !sort;
+    if(sort){
+        ui->sort->setStyleSheet("background:#e4f1f7;color:black;border-radius:4px;");
+    }else ui->sort->setStyleSheet("background:blue;color:white;border-radius:4px;");
+    if(!sort) return;
     delete scrollLayout;
     delete scrollWidget;
     scrollWidget = new QWidget(this);
@@ -109,7 +117,6 @@ void home::on_sort_clicked()
     for(auto &x:list){
         displayButton(x);
     }
-    ui->filter->setText("filter");
 }
 
 void home::on_organclick()

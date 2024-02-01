@@ -67,19 +67,28 @@
     <property name="geometry">
      <rect>
       <x>30</x>
-      <y>50</y>
+      <y>70</y>
       <width>141</width>
       <height>41</height>
      </rect>
+    </property>
+    <property name="font">
+     <font>
+      <italic>true</italic>
+     </font>
     </property>
     <property name="cursor">
      <cursorShape>PointingHandCursor</cursorShape>
     </property>
     <property name="styleSheet">
-     <string notr="true">background:blue;
+     <string notr="true">QPushButton{background:blue;
 border:none;
 border-radius:10px;
-color:white;</string>
+color:white;}
+QPushButton:hover{
+background:&quot;#020345&quot;;
+font-weight:bold;
+}</string>
     </property>
     <property name="text">
      <string>create organization</string>
@@ -89,13 +98,14 @@ color:white;</string>
     <property name="geometry">
      <rect>
       <x>210</x>
-      <y>10</y>
-      <width>101</width>
-      <height>20</height>
+      <y>0</y>
+      <width>181</width>
+      <height>31</height>
      </rect>
     </property>
     <property name="font">
      <font>
+      <pointsize>12</pointsize>
       <italic>true</italic>
       <bold>true</bold>
      </font>
@@ -111,19 +121,28 @@ color:white;</string>
     <property name="geometry">
      <rect>
       <x>30</x>
-      <y>110</y>
+      <y>130</y>
       <width>141</width>
       <height>41</height>
      </rect>
+    </property>
+    <property name="font">
+     <font>
+      <italic>true</italic>
+     </font>
     </property>
     <property name="cursor">
      <cursorShape>PointingHandCursor</cursorShape>
     </property>
     <property name="styleSheet">
-     <string notr="true">background:blue;
+     <string notr="true">QPushButton{background:blue;
 border:none;
 border-radius:10px;
-color:white;</string>
+color:white;}
+QPushButton:hover{
+background:&quot;#020345&quot;;
+font-weight:bold;
+}</string>
     </property>
     <property name="text">
      <string>my tasks</string>
@@ -133,19 +152,28 @@ color:white;</string>
     <property name="geometry">
      <rect>
       <x>30</x>
-      <y>170</y>
+      <y>190</y>
       <width>141</width>
       <height>41</height>
      </rect>
+    </property>
+    <property name="font">
+     <font>
+      <italic>true</italic>
+     </font>
     </property>
     <property name="cursor">
      <cursorShape>PointingHandCursor</cursorShape>
     </property>
     <property name="styleSheet">
-     <string notr="true">background:orange;
+     <string notr="true">QPushButton{background:orange;
 border:none;
 border-radius:10px;
-color:white;</string>
+color:white;}
+QPushButton:hover{
+background:&quot;#cc4e18&quot;;
+font-weight:bold;
+}</string>
     </property>
     <property name="text">
      <string>logout</string>
@@ -160,8 +188,18 @@ color:white;</string>
       <height>21</height>
      </rect>
     </property>
+    <property name="font">
+     <font>
+      <italic>true</italic>
+     </font>
+    </property>
     <property name="cursor">
      <cursorShape>PointingHandCursor</cursorShape>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background:blue;
+color:white;
+border-radius:4px;</string>
     </property>
     <property name="text">
      <string>sort</string>
@@ -176,11 +214,18 @@ color:white;</string>
       <height>21</height>
      </rect>
     </property>
+    <property name="font">
+     <font>
+      <italic>true</italic>
+     </font>
+    </property>
     <property name="cursor">
      <cursorShape>PointingHandCursor</cursorShape>
     </property>
     <property name="styleSheet">
-     <string notr="true"/>
+     <string notr="true">background:blue;
+color:white;
+border-radius:4px;</string>
     </property>
     <property name="text">
      <string>filter</string>

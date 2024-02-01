@@ -19,11 +19,12 @@ class home : public QWidget
     Q_OBJECT
     QVBoxLayout *scrollLayout;
     QWidget *scrollWidget;
-    QString filter = "all";
     QVector<Organization> list;
 signals:
     void _click(HOME ,Organization = Organization());
 public:
+    bool sort = false;
+    QString filter = "all";
     explicit home(QWidget *parent = nullptr);
     ~home();
     void display(Organization);
@@ -39,7 +40,6 @@ private slots:
 
     void on_sort_clicked();
 public slots:
-
     void on_organclick();
 
 private:

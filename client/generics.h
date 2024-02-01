@@ -49,6 +49,7 @@ public:
 class Organization{
 public:
     QString name;
+    QString username;
     QString role;
     QString description;
     QString type;

@@ -1,6 +1,15 @@
 #include "organization.h"
 #include "ui_organization.h"
 
+
+void organization::init()
+{
+    if(curOrgan.role == "member"){
+        ui->createProject->hide();
+        ui->createTeam->hide();
+    }
+}
+
 organization::organization(QWidget *parent)
     : QWidget(parent)
     , ui(new Ui::organization)
@@ -9,7 +18,8 @@ organization::organization(QWidget *parent)
     scrollWidgetTeam = new QWidget(this);
     scrollLayoutTeam = new QVBoxLayout(scrollWidgetTeam);
     scrollWidgetProject = new QWidget(this);
-    scrollLayoutProject = new QVBoxLayout(scrollWidgetProject);   
+    scrollLayoutProject = new QVBoxLayout(scrollWidgetProject);
+    //
 }
 
 organization::~organization()
@@ -46,9 +56,11 @@ void organization::displayTeam(Team t)
     QPushButton *button = new QPushButton(scrollWidgetTeam);
     connect(button , &QPushButton::clicked , this , &organization::on_teamclick);
     curTeam = t;
-    button->setStyleSheet("background:#7092be; border-radius:'25px'; width:280px;"
-                          " height:100px; font-size:30px; text-align:left; padding-left:30px;"
-                          "color:white;");
+    button->setStyleSheet("QPushButton{margin:5px;background:#7092be; border-radius:'25px'; width:300px;"
+                          " height:80px; font-size:40px; text-align:left; padding-left:30px;"
+                          "color:white;}"
+                          "QPushButton:hover{"
+                          "color:#7092be;background:white;}");
     button->setText(t.name);
     button->setCursor(Qt::PointingHandCursor);
     scrollLayoutTeam->addWidget(button);
@@ -61,9 +73,11 @@ void organization::displayProject(Project p)
     //
     QPushButton *button = new QPushButton(scrollWidgetProject);
     connect(button , &QPushButton::clicked , this , &organization::on_projectclick);
-    button->setStyleSheet("background:#818181; border-radius:'25px'; width:280px;"
-                          " height:100px; font-size:30px; text-align:left; padding-left:30px;"
-                          "color:white;");
+    button->setStyleSheet("QPushButton{margin:5px;background:#818181; border-radius:'25px'; width:300px;"
+                          " height:80px; font-size:40px; text-align:left; padding-left:30px;"
+                          "color:white;}"
+                          "QPushButton:hover{"
+                          "color:#818181;background:white;}");
     button->setText(p.name);
     button->setCursor(Qt::PointingHandCursor);
     scrollLayoutProject->addWidget(button);
@@ -97,14 +111,15 @@ void organization::on_createProject_clicked()
 
 void organization::on_filterteam_clicked()
 {
-    emit _click(ORGAN::filterteam);
+    // emit _click(ORGAN::filterteam);
     //
     if(filterteam == "all"){
         filterteam = "member";
+        ui->filterteam->setStyleSheet("background:#e4f1f7;color:black;border-radius:4px;");
     }else if(filterteam == "member"||filterteam=="director"){
         filterteam = "all";
+        ui->filterteam->setStyleSheet("background:blue;color:white;border-radius:4px;");
     }
-    ui->filterteam->setText("filter:"+filterteam);
     //
     delete scrollLayoutTeam;
     delete scrollWidgetTeam;
@@ -127,15 +142,15 @@ void organization::on_filterteam_clicked()
 
 void organization::on_filterproject_clicked()
 {
-    emit _click(ORGAN::filterproject);
+    // emit _click(ORGAN::filterproject);
     //
     if(filterproject == "all"){
         filterproject = "member";
+        ui->filterproject->setStyleSheet("background:#e4f1f7;color:black;border-radius:4px;");
     }else if(filterproject == "member"||filterproject =="director"){
         filterproject = "all";
+        ui->filterproject->setStyleSheet("background:blue;color:white;border-radius:4px;");
     }
-    ui->filterproject->setText("filter:"+filterproject);
-    //
     delete scrollLayoutProject;
     delete scrollWidgetProject;
     scrollWidgetProject = new QWidget(this);
@@ -157,8 +172,13 @@ void organization::on_filterproject_clicked()
 
 void organization::on_sortproject_clicked()
 {
-    emit _click(ORGAN::sortproject);
+    // emit _click(ORGAN::sortproject);
     //
+    sortproject = !sortproject;
+    if(sortproject)
+        ui->sortproject->setStyleSheet("background:#e4f1f7;color:black;border-radius:4px;");
+    else ui->sortproject->setStyleSheet("background:blue;color:white;border-radius:4px;");
+    if(!sortproject) return;
     delete scrollLayoutProject;
     delete scrollWidgetProject;
     scrollWidgetProject = new QWidget(this);
@@ -168,13 +188,17 @@ void organization::on_sortproject_clicked()
     for(auto &x:listproject){
         displayProject(x);
     }
-    ui->filterproject->setText("filter");
 }
 
 void organization::on_sortteam_clicked()
 {
-    emit _click(ORGAN::sortteam);
+    // emit _click(ORGAN::sortteam);
     //
+    sortteam = !sortteam;
+    if(sortteam)
+        ui->sortteam->setStyleSheet("background:#e4f1f7;color:black;border-radius:4px;");
+    else ui->sortteam->setStyleSheet("background:blue;color:white;border-radius:4px;");
+    if(!sortteam) return;
     delete scrollLayoutTeam;
     delete scrollWidgetTeam;
     scrollWidgetTeam = new QWidget(this);
@@ -184,7 +208,6 @@ void organization::on_sortteam_clicked()
     for(auto &x:listteam){
         displayTeam(x);
     }
-    ui->filterteam->setText("filter");
 }
 
 void organization::on_teamclick()

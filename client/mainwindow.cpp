@@ -1,5 +1,22 @@
 #include "mainwindow.h"
 
+
+void MainWindow::repeat()
+{
+    // QThread::msleep(2000);
+    if(place == admin::home){
+        if(hom&&!hom->sort&&hom->filter=="all")
+            createHome();
+    }
+    else if(place == admin::organization){
+        if(organ&&!organ->sortteam&&!organ->sortproject&&organ->filterteam=="all"&&organ->filterproject=="all")
+            createOrgan();
+    }
+    else if(place == admin::about_organization)
+        if(curOrgan.role != "manager")
+            createAboutorganization();
+}
+
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent)
 {
@@ -34,13 +51,20 @@ MainWindow::MainWindow(QWidget *parent) :
         if (file.open(QIODevice::ReadOnly | QIODevice::Text)) {
             QTextStream in(&file);
             in >> curUser.username;
-            send("client "+curUser.username);
-            QThread::msleep(1);
-            createHome();
+            if(curUser.username.isEmpty()){
+                create(com_type::entrance);
+            }
+            else{
+                send("client "+curUser.username);
+                createHome();
+            }
             file.close();
         }
     }else create(com_type::entrance);
-
+    //
+    QTimer *timer = new QTimer(this);
+    connect(timer, &QTimer::timeout, this , &MainWindow::repeat);
+    timer->start(4000);
 }
 
 MainWindow::~MainWindow()
@@ -113,6 +137,7 @@ void MainWindow::send(QString str)
 }
 
 void MainWindow::create(com_type type){
+    place = PLACE::null;
     QWidget **comp = &component[type];
     if(*comp)
     {
@@ -150,7 +175,7 @@ void MainWindow::create(com_type type){
 
 void MainWindow::createRec()
 {
-
+    place = PLACE::create_recovery;
     stack->setEnabled(false);
     QDialog *dialog = new QDialog();
     rec = new recovery(dialog);
@@ -196,8 +221,8 @@ void MainWindow::createOrgan()
     stack->setCurrentWidget(organ);
     stack->show();
     //
-    send("getteam SELECT team FROM 'organization_team' WHERE organization = '"+curOrgan.name+"'");
-    QThread::msleep(1);
+    send("getrole SELECT * FROM 'organization_member' WHERE name = '"+curOrgan.name+"' AND username ='"+curUser.username+"'");
+    // QThread::msleep(1);
 }
 
 void MainWindow::createCreateTeam()
@@ -236,6 +261,31 @@ void MainWindow::createAboutorganization()
     stack->show();
     //
     send("getmemberorg SELECT * FROM 'organization_member' WHERE name = '"+curOrgan.name+"'");
+}
+
+void MainWindow::createAddmember()
+{
+    place = PLACE::add_member;
+    stack->setEnabled(false);
+    QDialog *dialog = new QDialog();
+    addmemb = new addmemberClass(dialog);
+    dialog->move(pos() + (QGuiApplication::primaryScreen()->geometry().center() - geometry().center()));
+    dialog->show();
+    connect(dialog,&QDialog::finished , [&](){stack->setEnabled(true);});
+    connect(addmemb,&addmemberClass::_click , this , &MainWindow::addmemberFunc);
+}
+
+void MainWindow::createMembersetting()
+{
+    place = PLACE::member_setting;
+    stack->setEnabled(false);
+    QDialog *dialog = new QDialog();
+    memberset = new membersetting(dialog);
+    memberset->init(curMember);
+    dialog->move(pos() + (QGuiApplication::primaryScreen()->geometry().center() - geometry().center()));
+    dialog->show();
+    connect(dialog,&QDialog::finished , [&](){stack->setEnabled(true);});
+    connect(memberset,&membersetting::_click , this , &MainWindow::membersettingFunc);
 }
 
 void MainWindow::entranceFunc(Entrance::key_type type)
@@ -286,11 +336,15 @@ void MainWindow::homFunc(HOME t, Organization org)
         //
     }
     else if(t == HOME::logout){
+        create(com_type::entrance);
         QDir dir;
         QString path = dir.path() + "/user.txt";
         QFile file(path);
-        file.remove();
-        exit(0);
+        if (file.open(QIODevice::WriteOnly | QIODevice::Text)) {
+            // QTextStream out(&file);
+            // out << curUser.username << "\n";
+            file.close();
+        }
     }else if(t == HOME::organclick){
         curOrgan = org;
         createOrgan();
@@ -317,8 +371,12 @@ void MainWindow::organFunc(ORGAN type, Group)
         createCreateTeam();
     }else if(ORGAN::creatProject == type){
         createCreateProject();
-    }else if(ORGAN::about){
+    }else if(ORGAN::about == type){
         createAboutorganization();
+    }else if(ORGAN::teamclick == type){
+
+    }else if(ORGAN::projectclick == type){
+
     }
 }
 
@@ -337,7 +395,7 @@ void MainWindow::createprojectFunc(Project project)
 void MainWindow::aboutorganFunc(ABOUTORGAN t,Organization org)
 {
     if(t == ABOUTORGAN::addmember){
-
+        createAddmember();
     }
     else if(t == ABOUTORGAN::back){
         createOrgan();
@@ -345,15 +403,40 @@ void MainWindow::aboutorganFunc(ABOUTORGAN t,Organization org)
     else if(t == ABOUTORGAN::edit){
         send("editorgan UPDATE organization SET type='"+org.type+"' , description='"+org.description+"' WHERE name='"+org.name+"'");
     }
-    else if(t == ABOUTORGAN::addmember){
-
+    else if(t == ABOUTORGAN::memberclick){
+        curMember.username = org.username;
+        curMember.role = org.role;
+        createMembersetting();
     }else if(t == ABOUTORGAN::remove){
         send("removeorgan "+curOrgan.name);
     }
 }
 
+void MainWindow::addmemberFunc(ADDMEMBER t, User u)
+{
+    if(ADDMEMBER::userclick == t){
+        send("addmember INSERT INTO 'organization_member' (name , username , role) VALUES ('"+curOrgan.name+"','"+u.username+"','member') ");
+        auto com = dynamic_cast<QDialog*>(addmemb->parent());
+        com->close();
+        createAboutorganization();
+    }else if(ADDMEMBER::search == t){
+        send("searchmember "+u.username+" "+curOrgan.name+"");
+    }
+}
+
+void MainWindow::membersettingFunc(MEMBERSETTING t, User u)
+{
+    if(t == MEMBERSETTING::clear){
+        send("removememberorg DELETE FROM 'organization_member' WHERE username='"+u.username+"' AND name='"+curOrgan.name+"'");
+    }else if(t == MEMBERSETTING::disgrade){
+        send("disgradeorg UPDATE 'organization_member' SET role='member' WHERE name='"+curOrgan.name+"' AND username='"+u.username+"'");
+    }else if(t == MEMBERSETTING::upgrade){
+        send("upgradeorg UPDATE 'organization_member' SET role='admin' WHERE name='"+curOrgan.name+"' AND username='"+u.username+"'");
+    }
+}
+
 void MainWindow::get(QString str){
-    QThread::msleep(1);
+    // QThread::msleep(1);
     qDebug() <<"received:"<< str;
     //signup
     if(str == "username exists"){
@@ -377,7 +460,7 @@ void MainWindow::get(QString str){
             file.close();
         }
         send("client "+curUser.username);
-        QThread::msleep(1);
+        // QThread::msleep(1);
         createHome();
     }
     //recovery
@@ -443,7 +526,7 @@ void MainWindow::get(QString str){
     else if(str.split(" ").at(0) == "getproject"){
         if(place != PLACE::organization)return;
         str.remove(0 , 11);
-        send("getrole SELECT * FROM 'organization_member' WHERE name = '"+curOrgan.name+"' AND username ='"+curUser.username+"'");
+        // send("getrole SELECT * FROM 'organization_member' WHERE name = '"+curOrgan.name+"' AND username ='"+curUser.username+"'");
         //
         if(str.size()==0) return;
         QStringList l = str.split(" ");
@@ -462,9 +545,9 @@ void MainWindow::get(QString str){
         QStringList l = str.split(" ");
         for(int i = 0 ; i < l.size() ; i += 2){
             User u;
-            u.username = l[0];
-            u.role = l[1];
-            aboutorgan->display(u);
+            u.username = l[i];
+            u.role = l[i+1];
+            aboutorgan->displayMember(u);
         }
     }
     //editorgan
@@ -476,7 +559,10 @@ void MainWindow::get(QString str){
     //getrole
     else if(str.split(" ").at(0) == "getrole"){
         str.remove(0,8);
+        send("getteam SELECT team FROM 'organization_team' WHERE organization = '"+curOrgan.name+"'");
         curOrgan.role = str;
+        organ->curOrgan.role = str;
+        organ->init();
     }
     //curorgan
     else if(str.split(" ").at(0)== "curorgan"){
@@ -489,23 +575,24 @@ void MainWindow::get(QString str){
         aboutorgan->displayOrgan(curOrgan);
     }
     //removeorgan
-    else if(str == "removeorgan"){
-        createHome();
+    else if(str.split(" ").at(0) == "removeorgan"){
+        str.remove(0,12);
+        if(curOrgan.name == str)createHome();
+    }
+    //searchmember
+    else if(str.split(" ").at(0)== "searchmember"){
+        str.remove(0,13);
+        QStringList l = str.split(" ");
+        if(l.size()==0) return;
+        for(auto x:l){
+            addmemb->display(x);
+        }
+    }
+    //removememberorg || disgradeorg || upgradeorg
+    else if(str == "removememberorg" || str == "disgradeorg" || str == "upgradeorg"){
+        auto com = dynamic_cast<QDialog*>(memberset->parent());
+        com->close();
+        createAboutorganization();
     }
     //
-}
-
-void repeat::run()
-{
-    while(1){
-        QThread::msleep(2000);
-        if(place == admin::home)
-            createHome();
-        else if(place == admin::organization)
-            createOrgan();
-        else if(place == admin::organization)
-            createOrgan();
-        else if(place == admin::about_organization)
-            createAboutorganization();
-    }
 }

@@ -22,6 +22,8 @@
 #include <QFuture>
 #include <QtConcurrent/QtConcurrent>
 #include "aboutorganization.h"
+#include "addmember.h"
+#include "membersetting.h"
 
 namespace admin{
 enum com_type{entrance , signup , login , recovery};
@@ -39,12 +41,13 @@ class MainWindow : public QMainWindow
 
 private:
     QTcpSocket* socket;
-
+    QThread thread;
+    void repeat();
 public:
     PLACE place = PLACE::null;
     explicit MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
-
+    void run();
 private slots:
     void readSocket();
     void discardSocket();
@@ -65,6 +68,8 @@ public:
     void createCreateTeam();
     void createCreateProject();
     void createAboutorganization();
+    void createAddmember();
+    void createMembersetting();
 private:
     QWidget *component[SIZE];
     QStackedWidget *stack;
@@ -75,12 +80,15 @@ private:
     createteam *createmyteam;
     createproject *createmyproject;
     aboutorganization *aboutorgan;
+    addmemberClass *addmemb;
+    membersetting *memberset;
 private:
     User curUser;
     Organization curOrgan;
     Group curGroup;
     Team curTeam;
     Project curProject;
+    User curMember;
 
 public slots:
     void entranceFunc(Entrance::key_type type);
@@ -93,11 +101,8 @@ public slots:
     void createteamFunc(Team);
     void createprojectFunc(Project);
     void aboutorganFunc(ABOUTORGAN, Organization);
-};
-
-class repeat : public QThread , public MainWindow{
-public:
-    void run();
+    void addmemberFunc(ADDMEMBER , User);
+    void membersettingFunc(MEMBERSETTING , User);
 };
 
 

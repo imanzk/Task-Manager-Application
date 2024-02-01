@@ -45,7 +45,7 @@ signals:
 
 private:
     QTcpServer* server;
-    QMap<QString ,QTcpSocket*> connections;
+    QVector<QTcpSocket*> connections;
 
 };
 #endif // MAINWINDOW_H

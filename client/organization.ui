@@ -40,7 +40,7 @@
     <rect>
      <x>589</x>
      <y>50</y>
-     <width>361</width>
+     <width>381</width>
      <height>501</height>
     </rect>
    </property>
@@ -56,7 +56,7 @@ border:none;</string>
      <rect>
       <x>0</x>
       <y>0</y>
-      <width>361</width>
+      <width>381</width>
       <height>501</height>
      </rect>
     </property>
@@ -67,7 +67,7 @@ border:none;</string>
     <rect>
      <x>180</x>
      <y>50</y>
-     <width>361</width>
+     <width>381</width>
      <height>501</height>
     </rect>
    </property>
@@ -83,7 +83,7 @@ background:&quot;#c0c0c0&quot;</string>
      <rect>
       <x>0</x>
       <y>0</y>
-      <width>361</width>
+      <width>381</width>
       <height>501</height>
      </rect>
     </property>
@@ -93,10 +93,16 @@ background:&quot;#c0c0c0&quot;</string>
    <property name="geometry">
     <rect>
      <x>20</x>
-     <y>60</y>
+     <y>70</y>
      <width>141</width>
      <height>41</height>
     </rect>
+   </property>
+   <property name="font">
+    <font>
+     <italic>true</italic>
+     <bold>true</bold>
+    </font>
    </property>
    <property name="cursor">
     <cursorShape>PointingHandCursor</cursorShape>
@@ -120,14 +126,24 @@ color:white;</string>
      <height>41</height>
     </rect>
    </property>
+   <property name="font">
+    <font>
+     <italic>true</italic>
+     <bold>false</bold>
+    </font>
+   </property>
    <property name="cursor">
     <cursorShape>PointingHandCursor</cursorShape>
    </property>
    <property name="styleSheet">
-    <string notr="true">background:red;
+    <string notr="true">QPushButton{background:#1e93c9;
 border:none;
 border-radius:10px;
-color:white;</string>
+color:white;}
+QPushButton:hover{
+background:&quot;#183ccc&quot;;
+font-weight:bold;
+}</string>
    </property>
    <property name="text">
     <string>About</string>
@@ -137,19 +153,29 @@ color:white;</string>
    <property name="geometry">
     <rect>
      <x>20</x>
-     <y>200</y>
+     <y>190</y>
      <width>141</width>
      <height>41</height>
     </rect>
+   </property>
+   <property name="font">
+    <font>
+     <italic>true</italic>
+     <bold>false</bold>
+    </font>
    </property>
    <property name="cursor">
     <cursorShape>PointingHandCursor</cursorShape>
    </property>
    <property name="styleSheet">
-    <string notr="true">background:red;
+    <string notr="true">QPushButton{background:#1e93c9;
 border:none;
 border-radius:10px;
-color:white;</string>
+color:white;}
+QPushButton:hover{
+background:&quot;#183ccc&quot;;
+font-weight:bold;
+}</string>
    </property>
    <property name="text">
     <string>Create team</string>
@@ -159,19 +185,29 @@ color:white;</string>
    <property name="geometry">
     <rect>
      <x>20</x>
-     <y>270</y>
+     <y>250</y>
      <width>141</width>
      <height>41</height>
     </rect>
+   </property>
+   <property name="font">
+    <font>
+     <italic>true</italic>
+     <bold>false</bold>
+    </font>
    </property>
    <property name="cursor">
     <cursorShape>PointingHandCursor</cursorShape>
    </property>
    <property name="styleSheet">
-    <string notr="true">background:red;
+    <string notr="true">QPushButton{background:#1e93c9;
 border:none;
 border-radius:10px;
-color:white;</string>
+color:white;}
+QPushButton:hover{
+background:&quot;#183ccc&quot;;
+font-weight:bold;
+}</string>
    </property>
    <property name="text">
     <string>Create project</string>
@@ -181,13 +217,14 @@ color:white;</string>
    <property name="geometry">
     <rect>
      <x>180</x>
-     <y>20</y>
+     <y>10</y>
      <width>101</width>
-     <height>20</height>
+     <height>31</height>
     </rect>
    </property>
    <property name="font">
     <font>
+     <pointsize>12</pointsize>
      <italic>true</italic>
      <bold>true</bold>
     </font>
@@ -200,19 +237,20 @@ color:white;</string>
    <property name="geometry">
     <rect>
      <x>590</x>
-     <y>20</y>
+     <y>10</y>
      <width>101</width>
-     <height>20</height>
+     <height>31</height>
     </rect>
    </property>
    <property name="font">
     <font>
+     <pointsize>12</pointsize>
      <italic>true</italic>
      <bold>true</bold>
     </font>
    </property>
    <property name="text">
-    <string>projects</string>
+    <string> projects</string>
    </property>
   </widget>
   <widget class="QPushButton" name="filterproject">
@@ -224,8 +262,18 @@ color:white;</string>
      <height>21</height>
     </rect>
    </property>
+   <property name="font">
+    <font>
+     <italic>true</italic>
+    </font>
+   </property>
    <property name="cursor">
     <cursorShape>PointingHandCursor</cursorShape>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">background:blue;
+color:white;
+border-radius:4px;</string>
    </property>
    <property name="text">
     <string>filter</string>
@@ -240,8 +288,18 @@ color:white;</string>
      <height>21</height>
     </rect>
    </property>
+   <property name="font">
+    <font>
+     <italic>true</italic>
+    </font>
+   </property>
    <property name="cursor">
     <cursorShape>PointingHandCursor</cursorShape>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">background:blue;
+color:white;
+border-radius:4px;</string>
    </property>
    <property name="text">
     <string>sort</string>
@@ -256,8 +314,18 @@ color:white;</string>
      <height>21</height>
     </rect>
    </property>
+   <property name="font">
+    <font>
+     <italic>true</italic>
+    </font>
+   </property>
    <property name="cursor">
     <cursorShape>PointingHandCursor</cursorShape>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">background:blue;
+color:white;
+border-radius:4px;</string>
    </property>
    <property name="text">
     <string>filter</string>
@@ -272,8 +340,18 @@ color:white;</string>
      <height>21</height>
     </rect>
    </property>
+   <property name="font">
+    <font>
+     <italic>true</italic>
+    </font>
+   </property>
    <property name="cursor">
     <cursorShape>PointingHandCursor</cursorShape>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">background:blue;
+color:white;
+border-radius:4px;</string>
    </property>
    <property name="text">
     <string>sort</string>
