@@ -33,12 +33,15 @@ void home::displayButton(Organization org)
     else if(org.role == "member")
         color = "#99D9EA";
     QPushButton *button = new QPushButton(scrollWidget);
+    //
+    QDrag *drag = new QDrag(button);
+
     connect(button , &QPushButton::clicked , this , &home::on_organclick);
     button->setStyleSheet("QPushButton{margin:5px;background:"+color+"; border-radius:'25px'; width:650px;"
                                                   " height:100px; font-size:40px; text-align:left; padding-left:30px;"
                                                   "color:white;}"
                                                   "QPushButton:hover{"
-                                                  "color:"+color+";background:white;}");
+                                                  "color:"+color+";background:white;font-weight:bold;}");
     button->setText(org.name);
     button->setCursor(Qt::PointingHandCursor);
     scrollLayout->addWidget(button);

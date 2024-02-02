@@ -60,9 +60,13 @@ void organization::displayTeam(Team t)
                           " height:80px; font-size:40px; text-align:left; padding-left:30px;"
                           "color:white;}"
                           "QPushButton:hover{"
-                          "color:#7092be;background:white;}");
+                          "color:#7092be;background:white;font-weight:bold;}");
     button->setText(t.name);
     button->setCursor(Qt::PointingHandCursor);
+    if(!t.available && curOrgan.role=="member"){
+        button->setDisabled(true);
+        button->setCursor(Qt::ArrowCursor);
+    }
     scrollLayoutTeam->addWidget(button);
     ui->teams->setWidget(scrollWidgetTeam);
 }
@@ -77,9 +81,13 @@ void organization::displayProject(Project p)
                           " height:80px; font-size:40px; text-align:left; padding-left:30px;"
                           "color:white;}"
                           "QPushButton:hover{"
-                          "color:#818181;background:white;}");
+                          "color:#818181;background:white;font-weight:bold;}");
     button->setText(p.name);
     button->setCursor(Qt::PointingHandCursor);
+    if(!p.available && curOrgan.role=="member"){
+        button->setDisabled(true);
+        button->setCursor(Qt::ArrowCursor);
+    }
     scrollLayoutProject->addWidget(button);
     ui->projects->setWidget(scrollWidgetProject);
 }
@@ -129,7 +137,7 @@ void organization::on_filterteam_clicked()
     if(filterteam != "all"){
         for(auto x:listteam)
         {
-            if(filterteam == x.role){
+            if(x.available){
                 displayTeam(x);
             }
         }
@@ -159,7 +167,7 @@ void organization::on_filterproject_clicked()
     if(filterproject != "all"){
         for(auto x:listproject)
         {
-            if(filterproject == x.role){
+            if(x.available){
                 displayProject(x);
             }
         }

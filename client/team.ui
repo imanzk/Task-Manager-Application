@@ -51,11 +51,11 @@
     <string/>
    </property>
   </widget>
-  <widget class="QPushButton" name="home">
+  <widget class="QPushButton" name="back">
    <property name="geometry">
     <rect>
-     <x>21</x>
-     <y>60</y>
+     <x>20</x>
+     <y>70</y>
      <width>141</width>
      <height>41</height>
     </rect>
@@ -89,7 +89,7 @@ color:white;</string>
     </font>
    </property>
    <property name="text">
-    <string>teams</string>
+    <string>members</string>
    </property>
   </widget>
   <widget class="QLabel" name="label_7">
@@ -97,7 +97,7 @@ color:white;</string>
     <rect>
      <x>591</x>
      <y>20</y>
-     <width>101</width>
+     <width>121</width>
      <height>20</height>
     </rect>
    </property>
@@ -110,33 +110,6 @@ color:white;</string>
    <property name="text">
     <string>tasks to assign</string>
    </property>
-  </widget>
-  <widget class="QScrollArea" name="projects">
-   <property name="geometry">
-    <rect>
-     <x>590</x>
-     <y>50</y>
-     <width>361</width>
-     <height>451</height>
-    </rect>
-   </property>
-   <property name="styleSheet">
-    <string notr="true">background:&quot;#3f48cc&quot;;
-border:none;</string>
-   </property>
-   <property name="widgetResizable">
-    <bool>true</bool>
-   </property>
-   <widget class="QWidget" name="scrollAreaWidgetContents_3">
-    <property name="geometry">
-     <rect>
-      <x>0</x>
-      <y>0</y>
-      <width>361</width>
-      <height>451</height>
-     </rect>
-    </property>
-   </widget>
   </widget>
   <widget class="QPushButton" name="about">
    <property name="geometry">
@@ -160,13 +133,13 @@ color:white;</string>
     <string>About</string>
    </property>
   </widget>
-  <widget class="QScrollArea" name="teams">
+  <widget class="QScrollArea" name="members">
    <property name="geometry">
     <rect>
      <x>181</x>
      <y>50</y>
      <width>361</width>
-     <height>451</height>
+     <height>461</height>
     </rect>
    </property>
    <property name="styleSheet">
@@ -183,12 +156,12 @@ background:&quot;#3f48cc&quot;;</string>
       <x>0</x>
       <y>0</y>
       <width>361</width>
-      <height>451</height>
+      <height>461</height>
      </rect>
     </property>
    </widget>
   </widget>
-  <widget class="QPushButton" name="addmember">
+  <widget class="QPushButton" name="addtask">
    <property name="geometry">
     <rect>
      <x>900</x>
@@ -237,7 +210,7 @@ padding-bottom:10;</string>
     <bool>false</bool>
    </property>
   </widget>
-  <widget class="QPushButton" name="addmember_2">
+  <widget class="QPushButton" name="addmember">
    <property name="geometry">
     <rect>
      <x>490</x>
@@ -285,6 +258,34 @@ padding-bottom:10;</string>
    <property name="flat">
     <bool>false</bool>
    </property>
+  </widget>
+  <widget class="QScrollArea" name="tasks">
+   <property name="geometry">
+    <rect>
+     <x>580</x>
+     <y>50</y>
+     <width>361</width>
+     <height>461</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">border:none;
+
+background:&quot;#3f48cc&quot;;</string>
+   </property>
+   <property name="widgetResizable">
+    <bool>true</bool>
+   </property>
+   <widget class="QWidget" name="scrollAreaWidgetContents_6">
+    <property name="geometry">
+     <rect>
+      <x>0</x>
+      <y>0</y>
+      <width>361</width>
+      <height>461</height>
+     </rect>
+    </property>
+   </widget>
   </widget>
  </widget>
  <resources/>

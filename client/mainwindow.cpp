@@ -12,9 +12,13 @@ void MainWindow::repeat()
         if(organ&&!organ->sortteam&&!organ->sortproject&&organ->filterteam=="all"&&organ->filterproject=="all")
             createOrgan();
     }
-    else if(place == admin::about_organization)
+    else if(place == admin::about_organization){
         if(curOrgan.role != "manager")
             createAboutorganization();
+    }
+    else if(place == admin::team){
+        createTeam();
+    }
 }
 
 MainWindow::MainWindow(QWidget *parent) :
@@ -132,6 +136,7 @@ void MainWindow::displayError(QAbstractSocket::SocketError socketError)
 
 void MainWindow::send(QString str)
 {
+    qDebug()<<"submit:"<<str;
     socket->write(str.toUtf8().constData());
     socket->waitForBytesWritten(100);
 }
@@ -265,7 +270,7 @@ void MainWindow::createAboutorganization()
 
 void MainWindow::createAddmember()
 {
-    place = PLACE::add_member;
+    // place = PLACE::add_member;
     stack->setEnabled(false);
     QDialog *dialog = new QDialog();
     addmemb = new addmemberClass(dialog);
@@ -286,6 +291,57 @@ void MainWindow::createMembersetting()
     dialog->show();
     connect(dialog,&QDialog::finished , [&](){stack->setEnabled(true);});
     connect(memberset,&membersetting::_click , this , &MainWindow::membersettingFunc);
+}
+
+void MainWindow::createTeam() //mycreateteam
+{
+    place = PLACE::team;
+    myteam = new team;
+    myteam->curTeam = curTeam;
+    myteam->curOrg = curOrgan;
+    stack->setWindowTitle(curTeam.name + " team in "+curOrgan.name+" organization");
+    connect(myteam , &team::_click , this , &MainWindow::teamFunc);
+    stack->addWidget(myteam);
+    stack->setCurrentWidget(myteam);
+    stack->show();
+    //
+    if(curOrgan.role != "member"){
+        myteam->curTeam.role=curOrgan.role;
+        send("getmemberteam SELECT * FROM 'team_member' WHERE name = '"+curTeam.name+"'");
+    }
+    else{
+        send("curteam SELECT * FROM 'team_member' WHERE name='"+curTeam.name+"' AND username='"+curUser.username+"'");
+    }
+}
+
+void MainWindow::createMembersettingteam()
+{
+    place = PLACE::member_setting_team;
+    stack->setEnabled(false);
+    QDialog *dialog = new QDialog();
+    mymembersettingteam = new membersettingteam(dialog);
+    mymembersettingteam->init(curMember); //recent
+    dialog->move(pos() + (QGuiApplication::primaryScreen()->geometry().center() - geometry().center()));
+    dialog->show();
+    connect(dialog,&QDialog::finished , [&](){stack->setEnabled(true);});
+    connect(mymembersettingteam,&membersettingteam::_click , this , &MainWindow::membersettingteamFunc);
+}
+
+void MainWindow::createCreateTask()
+{
+    place = PLACE::create_task;
+    stack->setEnabled(false);
+    QDialog *dialog = new QDialog();
+    createmytask = new createtask(dialog);
+    dialog->move(pos() + (QGuiApplication::primaryScreen()->geometry().center() - geometry().center()));
+    dialog->show();
+    connect(dialog,&QDialog::finished , [&](){stack->setEnabled(true);});
+    connect(createmytask,&createtask::_click , this , &MainWindow::createtaskFunc);
+}
+
+void MainWindow::createTask()
+{
+
 }
 
 void MainWindow::entranceFunc(Entrance::key_type type)
@@ -362,7 +418,7 @@ void MainWindow::createorganFunc(Organization org)
     curOrgan = org;
 }
 
-void MainWindow::organFunc(ORGAN type, Group)
+void MainWindow::organFunc(ORGAN type, Group g)
 {
     if(ORGAN::home == type){
         createHome();
@@ -374,9 +430,10 @@ void MainWindow::organFunc(ORGAN type, Group)
     }else if(ORGAN::about == type){
         createAboutorganization();
     }else if(ORGAN::teamclick == type){
-
+        curTeam.name = g.name;
+        createTeam();
     }else if(ORGAN::projectclick == type){
-
+        curProject.name = g.name;
     }
 }
 
@@ -414,25 +471,82 @@ void MainWindow::aboutorganFunc(ABOUTORGAN t,Organization org)
 
 void MainWindow::addmemberFunc(ADDMEMBER t, User u)
 {
+    QString type1;
+    QString type2;
+    QString name;
+    QString table;
+    if(place == PLACE::team){
+        type1 = "addmemberteam";
+        type2 = "searchmemberteam";
+        table = "team_member";
+        name = curTeam.name;
+    }else if(place == PLACE::about_organization){
+        type1 = "addmember";
+        type2 = "searchmember";
+        table = "organization_member";
+        name = curOrgan.name;
+    }else if(place == PLACE::project){
+        type1 = "addmemberproject";
+        type2 = "searchmemberproject";
+        table = "project_member";
+        name = curProject.name;
+    }
     if(ADDMEMBER::userclick == t){
-        send("addmember INSERT INTO 'organization_member' (name , username , role) VALUES ('"+curOrgan.name+"','"+u.username+"','member') ");
+        send(type1+" INSERT INTO '"+table+"' (name , username , role) VALUES ('"+name+"','"+u.username+"','member') ");
         auto com = dynamic_cast<QDialog*>(addmemb->parent());
         com->close();
-        createAboutorganization();
+        repeat();
     }else if(ADDMEMBER::search == t){
-        send("searchmember "+u.username+" "+curOrgan.name+"");
+        send(type2+" "+u.username+" "+name+" "+curOrgan.name);
     }
 }
 
 void MainWindow::membersettingFunc(MEMBERSETTING t, User u)
 {
     if(t == MEMBERSETTING::clear){
-        send("removememberorg DELETE FROM 'organization_member' WHERE username='"+u.username+"' AND name='"+curOrgan.name+"'");
+        send("membersetting DELETE FROM 'organization_member' WHERE username='"+u.username+"' AND name='"+curOrgan.name+"'");
     }else if(t == MEMBERSETTING::disgrade){
-        send("disgradeorg UPDATE 'organization_member' SET role='member' WHERE name='"+curOrgan.name+"' AND username='"+u.username+"'");
+        send("membersetting UPDATE 'organization_member' SET role='member' WHERE name='"+curOrgan.name+"' AND username='"+u.username+"'");
     }else if(t == MEMBERSETTING::upgrade){
-        send("upgradeorg UPDATE 'organization_member' SET role='admin' WHERE name='"+curOrgan.name+"' AND username='"+u.username+"'");
+        send("membersetting UPDATE 'organization_member' SET role='admin' WHERE name='"+curOrgan.name+"' AND username='"+u.username+"'");
     }
+}
+
+void MainWindow::teamFunc(TEAM::t type, Team team)
+{
+    if(type == TEAM::about){
+
+    }else if(type == TEAM::addmember){
+        createAddmember();
+    }else if(type == TEAM::addtask){
+        createCreateTask();
+    }else if(type == TEAM::back){
+        createOrgan();
+    }else if(type == TEAM::memberclick){
+        curMember.username = team.username;
+        curMember.role = team.role;
+        createMembersettingteam();
+    }else if(type == TEAM::taskclick){
+
+    }
+
+}
+
+void MainWindow::membersettingteamFunc(MEMBERSETTINGTEAM::t t, User u)
+{
+    if(t == MEMBERSETTINGTEAM::clear){
+        send("membersettingteam DELETE FROM 'team_member' WHERE username='"+u.username+"' AND name='"+curTeam.name+"'");
+    }else if(t == MEMBERSETTINGTEAM::disgrade){
+        send("membersettingteam UPDATE 'team_member' SET role='member' WHERE name='"+curTeam.name+"' AND username='"+u.username+"'");
+    }else if(t == MEMBERSETTINGTEAM::upgrade){
+        send("membersettingteam UPDATE 'team_member' SET role='director' WHERE name='"+curTeam.name+"' AND username='"+u.username+"'");
+    }
+}
+
+void MainWindow::createtaskFunc(Task task)
+{
+    send("createtask INSERT INTO task (name, date, description) VALUES ('"+task.name+"','"+task.date+"','"+task.description+"')");
+    curTask = task;
 }
 
 void MainWindow::get(QString str){
@@ -509,16 +623,27 @@ void MainWindow::get(QString str){
         com->close();
         createOrgan();
     }
+    //createtask
+    else if(str == "task name exists"){
+        createmytask->display(str);
+    }else if(str == "task was added"){
+        send("createtask "+curTask.name+" "+curTeam.name);
+        auto com = dynamic_cast<QDialog*>(createmytask->parent());
+        com->close();
+        createTeam();
+    }
     //getteam
     else if(str.split(" ").at(0) == "getteam"){
         if(place != PLACE::organization)return;
         str.remove(0 , 8);
-        send("getproject SELECT project FROM 'organization_project' WHERE organization = '"+curOrgan.name+"'");
+        send("getproject "+curUser.username+" SELECT * FROM 'organization_project' WHERE organization = '"+curOrgan.name+"'");
         //
         if(str.size()==0) return;
         QStringList l = str.split(" ");
-        for(int i = 0 ; i < l.size() ; i += 1){
-            Team team(l[i]);
+        for(int i = 0 ; i < l.size() ; i += 2){
+            Team team;
+            team.name = l[i];
+            team.available = l[i+1]=='1'?true:false;
             organ->display(team);
         }
     }
@@ -526,12 +651,13 @@ void MainWindow::get(QString str){
     else if(str.split(" ").at(0) == "getproject"){
         if(place != PLACE::organization)return;
         str.remove(0 , 11);
-        // send("getrole SELECT * FROM 'organization_member' WHERE name = '"+curOrgan.name+"' AND username ='"+curUser.username+"'");
         //
         if(str.size()==0) return;
         QStringList l = str.split(" ");
-        for(int i = 0 ; i < l.size() ; i += 1){
-            Project project(l[i]);
+        for(int i = 0 ; i < l.size() ; i += 2){
+            Project project;
+            project.name = l[i];
+            project.available = l[i+1]=='1'?true:false;
             organ->display(project);
         }
     }
@@ -559,7 +685,7 @@ void MainWindow::get(QString str){
     //getrole
     else if(str.split(" ").at(0) == "getrole"){
         str.remove(0,8);
-        send("getteam SELECT team FROM 'organization_team' WHERE organization = '"+curOrgan.name+"'");
+        send("getteam "+curUser.username+" SELECT * FROM 'organization_team' WHERE organization = '"+curOrgan.name+"'");
         curOrgan.role = str;
         organ->curOrgan.role = str;
         organ->init();
@@ -588,11 +714,46 @@ void MainWindow::get(QString str){
             addmemb->display(x);
         }
     }
-    //removememberorg || disgradeorg || upgradeorg
-    else if(str == "removememberorg" || str == "disgradeorg" || str == "upgradeorg"){
+    //membersetting
+    else if(str == "membersetting"){
         auto com = dynamic_cast<QDialog*>(memberset->parent());
         com->close();
         createAboutorganization();
     }
-    //
+    //membersettingteam
+    else if(str == "membersettingteam"){
+        createTeam();
+        auto com = dynamic_cast<QDialog*>(mymembersettingteam->parent());
+        com->close();
+    }
+    //getmemberteam
+    else if(str.split(" ").at(0) == "getmemberteam"){
+        str.remove(0,14);
+        send("gettaskteam SELECT * FROM team_task WHERE team='"+curTeam.name+"'");
+        if(str.size()==0) return;
+        QStringList l = str.split(" ");
+        for(int i =0 ;i < l.size() ; i+=2){
+            myteam->displayMember(User(l[i],l[i+1]));
+        }
+    }
+    //gettaskteam
+    else if(str.split(" ").at(0) == "gettaskteam"){
+        str.remove(0,12);
+        if(str.size()==0) return;
+        QStringList l = str.split(" ");
+        for(int i =0 ;i < l.size() ; i+=1){
+            myteam->displayTask(Task(l[i]));
+        }
+    }
+    //curteam
+    else if(str.split(" ").at(0) == "curteam"){
+        str.remove(0,8);
+        QStringList l = str.split(" ");
+        curTeam.username = l[0];
+        curTeam.name = l[1];
+        curTeam.role = l[2];
+        myteam->curTeam = curTeam;
+        myteam->init();
+        send("getmemberteam SELECT * FROM 'team_member' WHERE name = '"+curTeam.name+"'");
+    }
 }

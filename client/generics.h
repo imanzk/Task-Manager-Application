@@ -9,6 +9,8 @@
 #include <QRect>
 #include <QLineEdit>
 #include <QPushButton>
+#include <QDrag>
+#include <QBrush>
 
 namespace space {
 enum type_exception{
@@ -42,6 +44,9 @@ public:
 public:
     User(QString _username){
         username = _username;
+    }
+    User(QString _username , QString _role){
+        username = _username; role = _role;
     }
     User()=default;
 
@@ -82,6 +87,8 @@ public:
     QString role;
     QString description;
     QString department;
+    QString username;
+    bool available = false;
     Team(QString _name , QString _role){
         name = _name; role = _role;
     }
@@ -96,6 +103,7 @@ public:
     QString role;
     QString description;
     QString goal;
+    bool available = false;
     Project(QString _name , QString _role){
         name = _name; role = _role;
     }
@@ -103,6 +111,19 @@ public:
         name = _name;
     }
     Project() = default;
+};
+class Task{
+public:
+    QString name;
+    QString date;
+    QString description;
+    Task(QString _name){
+        name = _name;
+    }
+    Task(QString _name,QString _date){
+        name = _name; date = _date;
+    }
+    Task() = default;
 };
 
 #endif // GENERICS_H

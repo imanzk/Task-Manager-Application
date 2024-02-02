@@ -12,14 +12,17 @@ SOURCES += \
     aboutorganization.cpp \
     aboutproject.cpp \
     aboutteam.cpp \
+    addcomment.cpp \
     addmember.cpp \
     archived.cpp \
     createproject.cpp \
+    createtask.cpp \
     createteam.cpp \
     main.cpp \
     mainwindow.cpp \
     entrancepage.cpp \
     membersetting.cpp \
+    membersettingteam.cpp \
     membertask.cpp \
     organization.cpp \
     project.cpp \
@@ -29,6 +32,7 @@ SOURCES += \
     generics.cpp \
     home.cpp \
     createorganization.cpp \
+    task.cpp \
     tasks.cpp \
     team.cpp
 
@@ -36,14 +40,17 @@ HEADERS += \
     aboutorganization.h \
     aboutproject.h \
     aboutteam.h \
+    addcomment.h \
     addmember.h \
     archived.h \
     createorganization.h \
     createproject.h \
+    createtask.h \
     createteam.h \
     mainwindow.h \
     entrancepage.h \
     membersetting.h \
+    membersettingteam.h \
     membertask.h \
     organization.h \
     project.h \
@@ -52,6 +59,7 @@ HEADERS += \
     loginpage.h \
     generics.h \
     home.h \
+    task.h \
     tasks.h \
     team.h
 
@@ -59,13 +67,16 @@ FORMS += \
     aboutorganization.ui \
     aboutproject.ui \
     aboutteam.ui \
+    addcomment.ui \
     addmember.ui \
     archived.ui \
     createorganization.ui \
     createproject.ui \
+    createtask.ui \
     createteam.ui \
     entrancepage.ui \
     membersetting.ui \
+    membersettingteam.ui \
     membertask.ui \
     project.ui \
     recovery.ui \
@@ -73,6 +84,7 @@ FORMS += \
     loginpage.ui \
     home.ui \
     organization.ui \
+    task.ui \
     tasks.ui \
     team.ui
 

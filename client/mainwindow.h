@@ -24,13 +24,16 @@
 #include "aboutorganization.h"
 #include "addmember.h"
 #include "membersetting.h"
+#include "team.h"
+#include "membersettingteam.h"
+#include "createtask.h"
 
 namespace admin{
 enum com_type{entrance , signup , login , recovery};
 enum PLACE{
-    null , create_recovery , about_organization , about_project , about_team , add_member , archived ,
+    null , create_recovery , about_organization , about_project , about_team , archived ,
     create_organization , create_project , create_team , home , member_setting , member_task ,
-    organization , project , tasks , team
+    organization , project , tasks , team , create_task , add_member , member_setting_team
 };
 } using admin::com_type , admin::PLACE;
 #define SIZE 3
@@ -70,6 +73,9 @@ public:
     void createAboutorganization();
     void createAddmember();
     void createMembersetting();
+    void createTeam();
+    void createMembersettingteam();
+    void createCreateTask();
 private:
     QWidget *component[SIZE];
     QStackedWidget *stack;
@@ -82,6 +88,9 @@ private:
     aboutorganization *aboutorgan;
     addmemberClass *addmemb;
     membersetting *memberset;
+    team *myteam;
+    membersettingteam* mymembersettingteam;
+    createtask *createmytask;
 private:
     User curUser;
     Organization curOrgan;
@@ -89,6 +98,7 @@ private:
     Team curTeam;
     Project curProject;
     User curMember;
+    Task curTask;
 
 public slots:
     void entranceFunc(Entrance::key_type type);
@@ -103,6 +113,9 @@ public slots:
     void aboutorganFunc(ABOUTORGAN, Organization);
     void addmemberFunc(ADDMEMBER , User);
     void membersettingFunc(MEMBERSETTING , User);
+    void teamFunc(TEAM::t , Team);
+    void membersettingteamFunc(MEMBERSETTINGTEAM::t , User);
+    void createtaskFunc(Task);
 };
 
 

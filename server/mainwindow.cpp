@@ -26,6 +26,14 @@ MainWindow::MainWindow(QWidget *parent)
     query.exec();
     query.prepare("CREATE TABLE organization_project(project text , organization text)");
     query.exec();
+    query.prepare("CREATE TABLE team_member(name text ,username text, role text)");
+    query.exec();
+    query.prepare("CREATE TABLE project_member(name text ,username text, role text)");
+    query.exec();
+    query.prepare("CREATE TABLE task(id integer primary key autoincrement unique not null, name text unique, date text , description text)");
+    query.exec();
+    query.prepare("CREATE TABLE team_task(task text, team text)");
+    query.exec();
     //
     //server
     server = new QTcpServer();
@@ -108,6 +116,7 @@ void MainWindow::displayError(QAbstractSocket::SocketError socketError)
 
 void MainWindow::send(QString str , QTcpSocket* socket)
 {
+    qDebug()<<"send:"<<str;
     if(socket)
         sendMessage(socket , str);
     else {
@@ -149,6 +158,7 @@ void MainWindow::get(QString str , QTcpSocket* socket)
     qDebug() << "get:" << str;
     //signup
     QSqlQuery qry;
+    QSqlQuery qry2;
     if(str.split(" ").at(0) == "INSERT"){
         qry.prepare(str);
         if(!qry.exec()){
@@ -255,9 +265,28 @@ void MainWindow::get(QString str , QTcpSocket* socket)
             qry.exec();
         }
     }
+    //createtask
+    else if(str.split(" ").at(0) == "createtask"){
+        str.remove(0,11);
+        if(str.split(" ").at(0) == "INSERT"){
+            qry.prepare(str);
+            if(!qry.exec()){
+                send("task name exists",socket);
+            }else{
+                send("task was added",socket);
+            }
+        }
+        else {
+            QStringList l = str.split(" ");
+            qry.prepare("INSERT INTO 'team_task' (task, team) VALUES ('"+l[0]+"','"+l[1]+"')");
+            qry.exec();
+        }
+    }
     //getteam
     else if(str.split(" ").at(0) == "getteam"){
         str.remove(0,8);
+        QString username = str.split(" ").at(0);
+        str.remove(0,str.indexOf(" "));
         qry.prepare(str);
         qry.exec();
         //
@@ -265,13 +294,19 @@ void MainWindow::get(QString str , QTcpSocket* socket)
         QString team;
         while(qry.next()){
             team = qry.value("team").toString();
-            q = q + " " + team;
+            qry2.prepare("SELECT * FROM team_member WHERE name='"+team+"' AND username='"+username+"'");
+            qry2.exec();
+            char exist = '1';
+            if(!qry2.next()) exist = '0';
+            q = q + " " + team + " " + exist;
         }
         send(q,socket);
     }
     //getproject
     else if(str.split(" ").at(0) == "getproject"){
         str.remove(0, 11);
+        QString username = str.split(" ").at(0);
+        str.remove(0,str.indexOf(" "));
         qry.prepare(str);
         qry.exec();
         //
@@ -279,7 +314,11 @@ void MainWindow::get(QString str , QTcpSocket* socket)
         QString project;
         while(qry.next()){
             project = qry.value("project").toString();
-            q = q + " " + project;
+            qry2.prepare("SELECT * FROM project_member WHERE name='"+project+"' AND username='"+username+"'");
+            qry2.exec();
+            char exist = '1';
+            if(!qry2.next()) exist = '0';
+            q = q + " " + project + " " + exist;
         }
         send(q,socket);
     }
@@ -372,7 +411,7 @@ void MainWindow::get(QString str , QTcpSocket* socket)
             QSqlQuery qry2;
             QString username = qry.value("username").toString();
             QString name = l[1];
-            qry2.prepare("SELECT * FROM organization_member WHERE username='"+username+"' AND name='"+name+"'");
+            qry2.prepare("SELECT * FROM 'organization_member' WHERE username='"+username+"' AND name='"+name+"'");
             qry2.exec();
             if(qry2.next()) continue;
             else {
@@ -381,28 +420,113 @@ void MainWindow::get(QString str , QTcpSocket* socket)
         }
         send(q , socket);
     }
-    //removememberorg
-    else if(str.split(" ").at(0) == "removememberorg"){
+    //addmemberteam
+    else if(str.split(" ").at(0) == "addmemberteam"){
+        str.remove(0 , 14);
+        qry.prepare(str);
+        qry.exec();
+    }
+    //searchmemberteam
+    else if(str.split(" ").at(0) == "searchmemberteam"){
+        str.remove(0,17);
+        QStringList l = str.split(" ");
+        qry.prepare("SELECT * FROM 'organization_member' WHERE name='"+l[2]+"' AND username LIKE '"+l[0]+"%'");
+        qry.exec();
+        QString q = "searchmember";
+        while(qry.next()){
+            QSqlQuery qry2;
+            QString username = qry.value("username").toString();
+            QString name = l[1];
+            qry2.prepare("SELECT * FROM 'team_member' WHERE username='"+username+"' AND name='"+name+"'");
+            qry2.exec();
+            if(qry2.next()) continue;
+            else {
+                q = q + " " + username;
+            }
+        }
+        send(q , socket);
+    }
+    //addmemberproject
+    else if(str.split(" ").at(0) == "addmemberproject"){
+        str.remove(0 , 17);
+        qry.prepare(str);
+        qry.exec();
+    }
+    //searchmemberproject
+    else if(str.split(" ").at(0) == "searchmemberproject"){
+        str.remove(0,20);
+        QStringList l = str.split(" ");
+        qry.prepare("SELECT * FROM 'organization_member' WHERE name='"+l[2]+"' AND username LIKE '"+l[0]+"%'");
+        qry.exec();
+        QString q = "searchmember";
+        while(qry.next()){
+            QSqlQuery qry2;
+            QString username = qry.value("username").toString();
+            QString name = l[1];
+            qry2.prepare("SELECT * FROM 'project_member' WHERE username='"+username+"' AND name='"+name+"'");
+            qry2.exec();
+            if(qry2.next()) continue;
+            else {
+                q = q + " " + username;
+            }
+        }
+        send(q , socket);
+    }
+    //membersetting
+    else if(str.split(" ").at(0) == "membersetting"){
         str.remove(0,16);
         qry.prepare(str);
         qry.exec();
-        send("removememberorg" ,socket);
+        send("membersetting" ,socket);
     }
-    //disgradeorg
-    else if(str.split(" ").at(0) == "disgradeorg"){
+    //membersettingteam
+    else if(str.split(" ").at(0) == "membersettingteam"){
+        str.remove(0,str.indexOf(" "));
+        qry.prepare(str);
+        qry.exec();
+        send("membersettingteam",socket);
+    }
+    //getmemberteam
+    else if(str.split(" ").at(0) == "getmemberteam"){
+        str.remove(0,14);
+        qry.prepare(str);
+        qry.exec();
+        QString q = "getmemberteam";
+        while(qry.next()){
+            QString username = qry.value("username").toString();
+            QString role = qry.value("role").toString();
+            q = q + " " + username + " " + role;
+        }
+        send(q,socket);
+    }
+    //gettaskteam
+    else if(str.split(" ").at(0) == "gettaskteam"){
         str.remove(0,12);
         qry.prepare(str);
         qry.exec();
-        send("disgradeorg" , socket);
+        QString q = "gettaskteam";
+        while(qry.next()){
+            QString taskname = qry.value("task").toString();
+            q = q + " " + taskname;
+        }
+        send(q,socket);
     }
-    //upgradeorg
-    else if(str.split(" ").at(0) == "upgradeorg"){
-        str.remove(0,11);
+    //curteam
+    else if(str.split(" ").at(0) == "curteam"){
+        str.remove(0,8);
         qry.prepare(str);
         qry.exec();
-        send("upgradeorg" ,socket);
+        QString q = "curteam";
+        if(!qry.next()){
+            send("curteam member doesn't exist",socket);
+            return;
+        }
+        QString username = qry.value("username").toString();
+        QString name = qry.value("name").toString();
+        QString role = qry.value("role").toString();
+        q = q + " " +username+ " " + name + " " + role;
+        send(q,socket);
     }
-    //
 }
 
 

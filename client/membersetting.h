@@ -20,7 +20,7 @@ public:
     ~membersetting();
     void init(User);
 signals:
-    void _click(MEMBERSETTING , User);
+    void _click(MEMBERSETTING , User=User());
 private slots:
     void on_upgrade_clicked();
 
