@@ -29,6 +29,9 @@
 #include "createtask.h"
 #include "task.h"
 #include "addcomment.h"
+#include "aboutteam.h"
+#include "project.h"
+#include "aboutproject.h"
 
 namespace admin{
 enum com_type{entrance , signup , login , recovery};
@@ -81,6 +84,9 @@ public:
     void createCreateTask();
     void createTask();
     void createAddcomment();
+    void createAboutTeam();
+    void createProject();
+    void createAboutProject();
 private:
     QWidget *component[SIZE];
     QStackedWidget *stack;
@@ -98,6 +104,9 @@ private:
     createtask *createmytask;
     task *mytask;
     addcomment *addcom;
+    aboutteam *aboutmyteam;
+    project *myproject;
+    aboutproject *aboutmyproject;
 private:
     User curUser;
     Organization curOrgan;
@@ -106,7 +115,7 @@ private:
     Project curProject;
     User curMember;
     Task curTask;
-
+    QString prevKind;
 public slots:
     void entranceFunc(Entrance::key_type type);
     void signupFunc(SignUp::key_type type,User);
@@ -125,6 +134,9 @@ public slots:
     void createtaskFunc(Task);
     void taskFunc(TASKPAGE::t , Task);
     void addcommentFunc(QString);
+    void aboutteamFunc(ABOUTTEAM::t , Team);
+    void projectFunc(PROJECT::t , Project);
+    void aboutprojectFunc(ABOUTPROJECT::t , Project);
 };
 
 

@@ -1,5 +1,175 @@
 #include "mainwindow.h"
 
+void MainWindow::refresh()
+{
+    QSqlQuery q , p;
+    //user
+    q.prepare("SELECT * FROM organization_member");
+    q.exec();
+    while(q.next()){
+        QString str = q.value("name").toString();
+        p.prepare("SELECT * FROM organization WHERE name='"+str+"'");
+        p.exec();
+        if(!p.next()){
+            p.prepare("DELETE FROM organization_member WHERE name='"+str+"'");
+            p.exec();
+        }
+        str = q.value("username").toString();
+        p.prepare("SELECT * FROM user WHERE username='"+str+"'");
+        p.exec();
+        if(!p.next()){
+            p.prepare("DELETE FROM organization_member WHERE username='"+str+"'");
+            p.exec();
+        }
+    }
+    //
+    q.prepare("SELECT * FROM organization_project");
+    q.exec();
+    while(q.next()){
+        QString str = q.value("project").toString();
+        p.prepare("SELECT * FROM project WHERE name='"+str+"'");
+        p.exec();
+        if(!p.next()){
+            p.prepare("DELETE FROM organization_project WHERE project='"+str+"'");
+            p.exec();
+        }
+        str = q.value("organization").toString();
+        p.prepare("SELECT * FROM organization WHERE name='"+str+"'");
+        p.exec();
+        if(!p.next()){
+            p.prepare("DELETE FROM organization_project WHERE organization='"+str+"'");
+            p.exec();
+        }
+    }
+    //
+    q.prepare("SELECT * FROM organization_team");
+    q.exec();
+    while(q.next()){
+        QString str = q.value("team").toString();
+        p.prepare("SELECT * FROM team WHERE name='"+str+"'");
+        p.exec();
+        if(!p.next()){
+            p.prepare("DELETE FROM organization_team WHERE team='"+str+"'");
+            p.exec();
+        }
+        str = q.value("organization").toString();
+        p.prepare("SELECT * FROM organization WHERE name='"+str+"'");
+        p.exec();
+        if(!p.next()){
+            p.prepare("DELETE FROM organization_team WHERE organization='"+str+"'");
+            p.exec();
+        }
+    }
+    //user
+    q.prepare("SELECT * FROM project_member");
+    q.exec();
+    while(q.next()){
+        QString str = q.value("name").toString();
+        p.prepare("SELECT * FROM project WHERE name='"+str+"'");
+        p.exec();
+        if(!p.next()){
+            p.prepare("DELETE FROM project_member WHERE name='"+str+"'");
+            p.exec();
+        }
+        str = q.value("username").toString();
+        p.prepare("SELECT * FROM user WHERE username='"+str+"'");
+        p.exec();
+        if(!p.next()){
+            p.prepare("DELETE FROM project_member WHERE username='"+str+"'");
+            p.exec();
+        }
+    }
+    //user
+    q.prepare("SELECT * FROM team_member");
+    q.exec();
+    while(q.next()){
+        QString str = q.value("name").toString();
+        p.prepare("SELECT * FROM team WHERE name='"+str+"'");
+        p.exec();
+        if(!p.next()){
+            p.prepare("DELETE FROM team_member WHERE name='"+str+"'");
+            p.exec();
+        }
+        str = q.value("username").toString();
+        p.prepare("SELECT * FROM user WHERE username='"+str+"'");
+        p.exec();
+        if(!p.next()){
+            p.prepare("DELETE FROM team_member WHERE username='"+str+"'");
+            p.exec();
+        }
+    }
+    //
+    q.prepare("SELECT * FROM project_task");
+    q.exec();
+    while(q.next()){
+        QString str = q.value("project").toString();
+        p.prepare("SELECT * FROM project WHERE name='"+str+"'");
+        p.exec();
+        if(!p.next()){
+            p.prepare("DELETE FROM project_task WHERE project='"+str+"'");
+            p.exec();
+        }
+        str = q.value("task").toString();
+        p.prepare("SELECT * FROM task WHERE name='"+str+"'");
+        p.exec();
+        if(!p.next()){
+            p.prepare("DELETE FROM project_task WHERE task='"+str+"'");
+            p.exec();
+        }
+    }
+    //
+    q.prepare("SELECT * FROM team_task");
+    q.exec();
+    while(q.next()){
+        QString str = q.value("team").toString();
+        p.prepare("SELECT * FROM team WHERE name='"+str+"'");
+        p.exec();
+        if(!p.next()){
+            p.prepare("DELETE FROM team_task WHERE team='"+str+"'");
+            p.exec();
+        }
+        str = q.value("task").toString();
+        p.prepare("SELECT * FROM task WHERE name='"+str+"'");
+        p.exec();
+        if(!p.next()){
+            p.prepare("DELETE FROM team_task WHERE task='"+str+"'");
+            p.exec();
+        }
+    }
+    // task_comment
+    q.prepare("SELECT * FROM task_comment");
+    q.exec();
+    while(q.next()){
+        QString str = q.value("task").toString();
+        p.prepare("SELECT * FROM task WHERE name='"+str+"'");
+        p.exec();
+        if(!p.next()){
+            p.prepare("DELETE FROM task_comment WHERE task='"+str+"'");
+            p.exec();
+        }
+    }
+    //user
+    q.prepare("SELECT * FROM task_member");
+    q.exec();
+    while(q.next()){
+        QString str = q.value("name").toString();
+        p.prepare("SELECT * FROM task WHERE name='"+str+"'");
+        p.exec();
+        if(!p.next()){
+            p.prepare("DELETE FROM task_member WHERE name='"+str+"'");
+            p.exec();
+        }
+        str = q.value("username").toString();
+        p.prepare("SELECT * FROM user WHERE username='"+str+"'");
+        p.exec();
+        if(!p.next()){
+            p.prepare("DELETE FROM task_member WHERE username='"+str+"'");
+            p.exec();
+        }
+    }
+}
+
+
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
 {
@@ -67,6 +237,7 @@ MainWindow::~MainWindow() {
     server->close();
     server->deleteLater();
 }
+
 
 void MainWindow::newConnection()
 {
@@ -160,7 +331,9 @@ void MainWindow::sendMessage(QTcpSocket* socket , QString str)
 
 void MainWindow::get(QString str , QTcpSocket* socket)
 {
-
+    refresh();
+    refresh();
+    refresh();
     qDebug() << "get:" << str;
     QSqlQuery qry;
     QSqlQuery qry2;
@@ -284,8 +457,8 @@ void MainWindow::get(QString str , QTcpSocket* socket)
             }
         }
         else {
-            QStringList l = str.split(" ");
-            qry.prepare("INSERT INTO 'team_task' (task, team) VALUES ('"+l[0]+"','"+l[1]+"')");
+            str.remove(0,4);
+            qry.prepare(str);
             qry.exec();
         }
     }
@@ -548,6 +721,18 @@ void MainWindow::get(QString str , QTcpSocket* socket)
         }
         send(q,socket);
     }
+    //gettaskproject
+    else if(str.split(" ").at(0) == "gettaskproject"){
+        str.remove(0,in);
+        qry.prepare(str);
+        qry.exec();
+        QString q = "gettaskproject";
+        while(qry.next()){
+            QString taskname = qry.value("task").toString();
+            q = q + " " + taskname;
+        }
+        send(q,socket);
+    }
     //curteam
     else if(str.split(" ").at(0) == "curteam"){
         str.remove(0,in);
@@ -633,6 +818,77 @@ void MainWindow::get(QString str , QTcpSocket* socket)
         qry.exec();
         qry.prepare("DELETE FROM project_task WHERE task='"+task+"'");
         qry.exec();
+    }
+    //removeteam
+    else if(str.split(" ").at(0) == "removeteam"){
+        str.remove(0,in);
+        qry.prepare(str);
+        qry.exec();
+        send("removeteam" , socket);
+    }
+    //removeproject
+    else if(str.split(" ").at(0) == "removeproject"){
+        str.remove(0,in);
+        qry.prepare(str);
+        qry.exec();
+        send("removeproject" , socket);
+    }
+    //editteam
+    else if(str.split(" ").at(0) == "editteam"){
+        str.remove(0,in);
+        qry.prepare(str);
+        qry.exec();
+        send("editteam" , socket);
+    }
+    //editproject
+    else if(str.split(" ").at(0) == "editproject"){
+        str.remove(0,in);
+        qry.prepare(str);
+        qry.exec();
+        send("editproject" , socket);
+    }
+    //getaboutteam
+    else if(str.split(" ").at(0) == "getaboutteam"){
+        str.remove(0,in);
+        qry.prepare(str);
+        qry.exec();
+        qry.next();
+        QString name = qry.value("name").toString();
+        QString department = qry.value("department").toString();
+        QString description = qry.value("description").toString();
+        QString q = "getaboutteam " + name + "," + department + "," + description;
+        send(q , socket);
+    }
+    //getaboutproject
+    else if(str.split(" ").at(0) == "getaboutproject"){
+        str.remove(0,in);
+        qry.prepare(str);
+        qry.exec();
+        qry.next();
+        QString name = qry.value("name").toString();
+        QString goal = qry.value("goal").toString();
+        QString description = qry.value("description").toString();
+        QString q = "getaboutproject " + name + "," + goal + "," + description;
+        send(q , socket);
+    }
+    //getmemberproject
+    else if(str.split(" ").at(0) == "getmemberproject"){
+        str.remove(0,in);
+        qry.prepare(str);
+        qry.exec();
+        QString q= "getmemberproject";
+        while(qry.next()){
+            QString username = qry.value("username").toString();
+            q = q + " " + username;
+        }
+        send(q , socket);
+    }
+    //removememberproject
+    else if(str.split(" ").at(0) == "removememberproject"){
+        str.remove(0,in);
+        qry.prepare(str);
+        qry.exec();
+        send("removememberproject" , socket);
     }
 }
 

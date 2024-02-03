@@ -79,7 +79,7 @@ border-radius:15;
 padding-left:10;</string>
     </property>
     <property name="placeholderText">
-     <string>project goal..</string>
+     <string>status..</string>
     </property>
    </widget>
    <widget class="QPushButton" name="create">

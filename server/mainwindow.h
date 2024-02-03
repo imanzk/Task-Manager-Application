@@ -23,7 +23,7 @@ class MainWindow : public QMainWindow
 public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
-
+    void refresh();
 private slots:
     void newConnection();
     void appendToSocketList(QTcpSocket* socket);

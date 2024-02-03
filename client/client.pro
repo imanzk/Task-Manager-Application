@@ -14,7 +14,6 @@ SOURCES += \
     aboutteam.cpp \
     addcomment.cpp \
     addmember.cpp \
-    archived.cpp \
     createproject.cpp \
     createtask.cpp \
     createteam.cpp \
@@ -23,7 +22,6 @@ SOURCES += \
     entrancepage.cpp \
     membersetting.cpp \
     membersettingteam.cpp \
-    membertask.cpp \
     organization.cpp \
     project.cpp \
     recovery.cpp \
@@ -33,7 +31,6 @@ SOURCES += \
     home.cpp \
     createorganization.cpp \
     task.cpp \
-    tasks.cpp \
     team.cpp
 
 HEADERS += \
@@ -42,7 +39,6 @@ HEADERS += \
     aboutteam.h \
     addcomment.h \
     addmember.h \
-    archived.h \
     createorganization.h \
     createproject.h \
     createtask.h \
@@ -51,7 +47,6 @@ HEADERS += \
     entrancepage.h \
     membersetting.h \
     membersettingteam.h \
-    membertask.h \
     organization.h \
     project.h \
     recovery.h \
@@ -60,7 +55,6 @@ HEADERS += \
     generics.h \
     home.h \
     task.h \
-    tasks.h \
     team.h
 
 FORMS += \
@@ -69,7 +63,6 @@ FORMS += \
     aboutteam.ui \
     addcomment.ui \
     addmember.ui \
-    archived.ui \
     createorganization.ui \
     createproject.ui \
     createtask.ui \
@@ -77,7 +70,6 @@ FORMS += \
     entrancepage.ui \
     membersetting.ui \
     membersettingteam.ui \
-    membertask.ui \
     project.ui \
     recovery.ui \
     signuppage.ui \
@@ -85,7 +77,6 @@ FORMS += \
     home.ui \
     organization.ui \
     task.ui \
-    tasks.ui \
     team.ui
 
 

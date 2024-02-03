@@ -41,6 +41,10 @@ User SignUpPage::getUserData()
             program_exception e(type_exception::fill_out_blanks);
             throw e;
         }
+        if(data[i]->text().contains(',') || data[i]->text().contains(' ')){
+            program_exception e("',' or white space not allowed!");
+            throw e;
+        }
     }
 
     User u;
@@ -60,4 +64,10 @@ void SignUpPage::displayMessage(const QString stream)
     ui->ErrorLabel->setText(stream);
 }
 
+
+
+void SignUpPage::on_checked_stateChanged(int arg1)
+{
+    qDebug()<<arg1;
+}
 

@@ -39,6 +39,10 @@ User LogInPage::getUserData()
             program_exception e(type_exception::fill_out_blanks);
             throw e;
         }
+        if(data[i]->text().contains(',') || data[i]->text().contains(' ')){
+            program_exception e("',' or white space not allowed!");
+            throw e;
+        }
     }
     User u;
     u.username = data[0]->text();

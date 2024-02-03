@@ -29,6 +29,7 @@ public:
 private slots:
     void on_OKpushButton_clicked();
     void on_CancelpushButton_clicked();
+    void on_checked_stateChanged(int arg1);
 };
 
 #endif // SIGNUPPAGE_H

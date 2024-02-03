@@ -60,12 +60,12 @@ void task::displayComment(QString comment)
     QPushButton *button = new QPushButton(scrollWidgetComment);
     connect(button , &QPushButton::clicked , this , &task::commentclick);
     button->setStyleSheet("background:white; border-radius:'2px';"
-                          " min-height:50px; font-size:20px; text-align:left; padding:4px;"
-                          "color:black;word-wrap:break-word;");
-    button->setText(comment);
+                          "font-size:15px; text-align:left; padding:2px;"
+                          "color:black;");
     if(curOrgan.role == "member" && curTeam.role == "member"){
         button->setDisabled(true);
     }
+    button->setText(comment);
     scrollLayoutComment->addWidget(button);
     ui->comments->setWidget(scrollWidgetComment);
 }

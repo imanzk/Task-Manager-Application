@@ -20,7 +20,6 @@ team::~team()
 void team::init()
 {
     if(curTeam.role == "member"||curTeam.role=="director"){
-        qDebug()<<curTeam.role;
         ui->addmember->hide();
         ui->addtask->hide();
     }
@@ -108,9 +107,9 @@ void team::on_memberclick()
     }
     if(curOrg.role!="member")
         emit _click(TEAM::memberclick , team);
-    else{
-        emit _click(TEAM::memberclicktask , team);
-    }
+    // else{
+    //     emit _click(TEAM::memberclicktask , team);
+    // }
 }
 
 void team::on_taskclick()

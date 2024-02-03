@@ -227,6 +227,6 @@ void organization::on_teamclick()
 void organization::on_projectclick()
 {
     QPushButton* buttonSender = qobject_cast<QPushButton*>(sender());
-    emit _click(ORGAN::teamclick , Group(buttonSender->text(),"project"));
+    emit _click(ORGAN::projectclick , Group(buttonSender->text(),"project"));
 }
 

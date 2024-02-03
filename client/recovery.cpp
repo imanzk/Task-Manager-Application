@@ -30,6 +30,10 @@ void recovery::on_btn_clicked()
             display("fill out the blanks");
             return;
         }
+        if(data[i]->text().contains(',') || data[i]->text().contains(' ')){
+            program_exception e("',' or white space not allowed!");
+            throw e;
+        }
     }
     User u;
     u.username = data[0]->text();

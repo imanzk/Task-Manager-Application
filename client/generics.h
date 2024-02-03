@@ -11,6 +11,7 @@
 #include <QPushButton>
 #include <QDrag>
 #include <QBrush>
+#include <QScrollBar>
 
 namespace space {
 enum type_exception{
@@ -120,6 +121,8 @@ public:
     QString role;
     QString description;
     QString goal;
+    Task task;
+    User user;
     bool available = false;
     Project(QString _name , QString _role){
         name = _name; role = _role;

@@ -58,7 +58,7 @@ padding-left:10;</string>
      <string>project name..</string>
     </property>
    </widget>
-   <widget class="QLineEdit" name="type">
+   <widget class="QLineEdit" name="status">
     <property name="geometry">
      <rect>
       <x>40</x>
@@ -79,40 +79,15 @@ border-radius:15;
 padding-left:10;</string>
     </property>
     <property name="placeholderText">
-     <string>project goal..</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="create">
-    <property name="geometry">
-     <rect>
-      <x>342</x>
-      <y>400</y>
-      <width>131</width>
-      <height>41</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <pointsize>12</pointsize>
-     </font>
-    </property>
-    <property name="cursor">
-     <cursorShape>PointingHandCursor</cursorShape>
-    </property>
-    <property name="styleSheet">
-     <string notr="true">background:green;
-border-radius:10;</string>
-    </property>
-    <property name="text">
-     <string>Edit</string>
+     <string>status..</string>
     </property>
    </widget>
    <widget class="QLabel" name="label">
     <property name="geometry">
      <rect>
-      <x>70</x>
+      <x>50</x>
       <y>410</y>
-      <width>231</width>
+      <width>251</width>
       <height>20</height>
      </rect>
     </property>
@@ -164,6 +139,56 @@ li.checked::marker { content: &quot;\2612&quot;; }
     </property>
     <property name="placeholderText">
      <string>description..</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="remove">
+    <property name="geometry">
+     <rect>
+      <x>410</x>
+      <y>400</y>
+      <width>61</width>
+      <height>41</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>12</pointsize>
+     </font>
+    </property>
+    <property name="cursor">
+     <cursorShape>PointingHandCursor</cursorShape>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background:red;
+border-radius:10;</string>
+    </property>
+    <property name="text">
+     <string>Delete</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="create">
+    <property name="geometry">
+     <rect>
+      <x>320</x>
+      <y>400</y>
+      <width>71</width>
+      <height>41</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>12</pointsize>
+     </font>
+    </property>
+    <property name="cursor">
+     <cursorShape>PointingHandCursor</cursorShape>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background:green;
+border-radius:10;</string>
+    </property>
+    <property name="text">
+     <string>Edit</string>
     </property>
    </widget>
   </widget>
