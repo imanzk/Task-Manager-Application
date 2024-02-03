@@ -23,8 +23,8 @@ void createtask::on_create_clicked()
     QDateTime t = ui->date->dateTime();
     // QDateTime l = QDateTime::currentDateTime();
     // if(t>l){
-    //     qDebug()<<t.toString("yyyy/MM/dd,hh:mm");
-    //     qDebug()<<l.toString("yyyy/MM/dd,hh:mm");
+    //     qDebug()<<t.toString("yyyy/MM/dd-hh:mm");
+    //     qDebug()<<l.toString("yyyy/MM/dd-hh:mm");
     // }
     Task task;
     int size = 1;
@@ -39,7 +39,7 @@ void createtask::on_create_clicked()
         }
     }
     task.name = data[0]->text();
-    task.date = t.toString("yyyy/MM/dd,hh:mm");
+    task.date = t.toString("yyyy/MM/dd-hh:mm");
     task.description = ui->description->toPlainText();
 
     emit _click(task);

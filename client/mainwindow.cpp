@@ -18,6 +18,9 @@ void MainWindow::repeat()
     }
     else if(place == admin::team){
         createTeam();
+    }else if(place == admin::task){
+        if(curOrgan.role == "member")
+            createTask();
     }
 }
 
@@ -68,7 +71,7 @@ MainWindow::MainWindow(QWidget *parent) :
     //
     QTimer *timer = new QTimer(this);
     connect(timer, &QTimer::timeout, this , &MainWindow::repeat);
-    timer->start(4000);
+    // timer->start(4000);
 }
 
 MainWindow::~MainWindow()
@@ -341,7 +344,28 @@ void MainWindow::createCreateTask()
 
 void MainWindow::createTask()
 {
+    place = PLACE::task;
+    mytask = new task;
+    mytask->curOrgan = curOrgan;
+    mytask->curTeam = curTeam;
+    connect(mytask , &task::_click , this , &MainWindow::taskFunc);
+    stack->addWidget(mytask);
+    stack->setCurrentWidget(mytask);
+    stack->show();
+    //
+    send("curtask SELECT * FROM task WHERE name='"+curTask.name+"'");
+}
 
+void MainWindow::createAddcomment()
+{
+    place = PLACE::add_comment;
+    stack->setEnabled(false);
+    QDialog *dialog = new QDialog();
+    addcom = new addcomment(dialog);
+    dialog->move(pos() + (QGuiApplication::primaryScreen()->geometry().center() - geometry().center()));
+    dialog->show();
+    connect(dialog,&QDialog::finished , [&](){stack->setEnabled(true);});
+    connect(addcom,&addcomment::_click , this , &MainWindow::addcommentFunc);
 }
 
 void MainWindow::entranceFunc(Entrance::key_type type)
@@ -490,12 +514,18 @@ void MainWindow::addmemberFunc(ADDMEMBER t, User u)
         type2 = "searchmemberproject";
         table = "project_member";
         name = curProject.name;
+    }else if(place == PLACE::task){
+        type1 = "addmembertask";
+        type2 = "searchmembertask";
+        table = "task_member";
+        name = curTask.name;
     }
     if(ADDMEMBER::userclick == t){
-        send(type1+" INSERT INTO '"+table+"' (name , username , role) VALUES ('"+name+"','"+u.username+"','member') ");
+        if(place==PLACE::team||place==PLACE::about_organization)send(type1+" INSERT INTO '"+table+"' (name , username , role) VALUES ('"+name+"','"+u.username+"','member') ");
+        else send(type1+" INSERT INTO '"+table+"' (name , username) VALUES ('"+name+"','"+u.username+"') ");
         auto com = dynamic_cast<QDialog*>(addmemb->parent());
         com->close();
-        repeat();
+
     }else if(ADDMEMBER::search == t){
         send(type2+" "+u.username+" "+name+" "+curOrgan.name);
     }
@@ -527,9 +557,9 @@ void MainWindow::teamFunc(TEAM::t type, Team team)
         curMember.role = team.role;
         createMembersettingteam();
     }else if(type == TEAM::taskclick){
-
+        curTask = team.task;
+        createTask();
     }
-
 }
 
 void MainWindow::membersettingteamFunc(MEMBERSETTINGTEAM::t t, User u)
@@ -549,9 +579,41 @@ void MainWindow::createtaskFunc(Task task)
     curTask = task;
 }
 
+void MainWindow::taskFunc(TASKPAGE::t type, Task task)
+{
+    if(type == TASKPAGE::addcomment){
+        createAddcomment();
+    }else if(type == TASKPAGE::addmember){
+        createAddmember();
+    }else if(type == TASKPAGE::back){
+        createTeam();
+    }else if(type == TASKPAGE::commentclick){
+        send("removecomment DELETE FROM task_comment WHERE task='"+task.name+"' AND comment='"+task.comment+"'");
+        createTask();
+    }else if(type == TASKPAGE::memberclick){
+        send("removemembertask DELETE FROM task_member WHERE name='"+task.name+"' AND username='"+task.user.username+"'");
+        createTask();
+    }else if(type == TASKPAGE::edit){
+        send("edittask UPDATE task SET description='"+task.description+"' , date='"+task.date+"' WHERE name='"+task.name+"'");
+        createTask();
+    }else if(type == TASKPAGE::remove){
+        send("removetask "+task.name);
+        createTeam();
+    }
+}
+
+void MainWindow::addcommentFunc(QString comment)
+{
+    comment = curUser.username + ":\n" + comment;
+    send("addcomment INSERT INTO task_comment (task , comment) VALUES ('"+curTask.name+"','"+comment+"')");
+    auto com = dynamic_cast<QDialog*>(addcom->parent());
+    com->close();
+    createTask();
+}
+
 void MainWindow::get(QString str){
-    // QThread::msleep(1);
     qDebug() <<"received:"<< str;
+    int in = str.indexOf(" ")+1;
     //signup
     if(str == "username exists"){
         auto comp = dynamic_cast<SignUpPage*>(component[com_type::signup]);
@@ -722,9 +784,9 @@ void MainWindow::get(QString str){
     }
     //membersettingteam
     else if(str == "membersettingteam"){
-        createTeam();
         auto com = dynamic_cast<QDialog*>(mymembersettingteam->parent());
         com->close();
+        createTeam();
     }
     //getmemberteam
     else if(str.split(" ").at(0) == "getmemberteam"){
@@ -755,5 +817,44 @@ void MainWindow::get(QString str){
         myteam->curTeam = curTeam;
         myteam->init();
         send("getmemberteam SELECT * FROM 'team_member' WHERE name = '"+curTeam.name+"'");
+    }
+    //curtask
+    else if(str.split(" ").at(0) == "curtask"){
+        str.remove(0,8);
+        if(str.size()==0)return;
+        QStringList l = str.split(",");
+        curTask.name = l[0];
+        curTask.date = l[1];
+        curTask.description = l[2];
+        mytask->curTask = curTask;
+        stack->setWindowTitle(curTask.name + " task");
+        mytask->init();
+        send("gettaskmember SELECT * FROM 'task_member' WHERE name = '"+curTask.name+"'");
+    }
+    //gettaskmember
+    else if(str.split(" ").at(0) == "gettaskmember"){
+        str.remove(0,14);
+        send("gettaskcomment SELECT * FROM 'task_comment' WHERE task='"+curTask.name+"'");
+        if(str.size()==0)return;
+        QStringList l = str.split(" ");
+        for(auto x:l){
+            mytask->displayUser(User(x));
+        }
+    }
+    //gettaskcomment
+    else if(str.split(" ").at(0) == "gettaskcomment"){
+        str.remove(0,16);
+        QStringList l = str.split(",");
+        if(str.size()==0)return;
+        for(auto x:l){
+            mytask->displayComment(x);
+        }
+    }
+    //addmember
+    else if(str == "addmember"){
+        if(place == PLACE::about_organization) createAboutorganization();
+        else if(place == PLACE::team) createTeam();
+        // else if(place == PLACE::project) createProject();
+        else if(place == PLACE::task) createTask();
     }
 }

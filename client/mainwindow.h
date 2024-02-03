@@ -27,13 +27,16 @@
 #include "team.h"
 #include "membersettingteam.h"
 #include "createtask.h"
+#include "task.h"
+#include "addcomment.h"
 
 namespace admin{
 enum com_type{entrance , signup , login , recovery};
 enum PLACE{
     null , create_recovery , about_organization , about_project , about_team , archived ,
     create_organization , create_project , create_team , home , member_setting , member_task ,
-    organization , project , tasks , team , create_task , add_member , member_setting_team
+    organization , project , tasks , team , create_task , add_member , member_setting_team , task ,
+    add_comment
 };
 } using admin::com_type , admin::PLACE;
 #define SIZE 3
@@ -76,6 +79,8 @@ public:
     void createTeam();
     void createMembersettingteam();
     void createCreateTask();
+    void createTask();
+    void createAddcomment();
 private:
     QWidget *component[SIZE];
     QStackedWidget *stack;
@@ -91,6 +96,8 @@ private:
     team *myteam;
     membersettingteam* mymembersettingteam;
     createtask *createmytask;
+    task *mytask;
+    addcomment *addcom;
 private:
     User curUser;
     Organization curOrgan;
@@ -116,6 +123,8 @@ public slots:
     void teamFunc(TEAM::t , Team);
     void membersettingteamFunc(MEMBERSETTINGTEAM::t , User);
     void createtaskFunc(Task);
+    void taskFunc(TASKPAGE::t , Task);
+    void addcommentFunc(QString);
 };
 
 

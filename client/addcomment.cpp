@@ -12,3 +12,14 @@ addcomment::~addcomment()
 {
     delete ui;
 }
+
+void addcomment::on_edit_clicked()
+{
+    if(ui->comment->toPlainText().isEmpty()){
+        ui->error->setText("fill out the blank!");
+    }else{
+        QString comment = ui->comment->toPlainText();
+        emit _click(comment);
+    }
+}
+

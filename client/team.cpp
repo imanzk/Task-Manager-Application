@@ -86,9 +86,7 @@ void team::displayTask(Task t)
                           "font-weight:bold;}");
     button->setText(t.name);
 
-    if(curTeam.role == "member"||curOrg.role=="manager"||curOrg.role=="admin"){
-        button->setDisabled(true);
-    }
+
     button->setCursor(Qt::PointingHandCursor);
     scrollLayoutTask->addWidget(button);
     ui->tasks->setWidget(scrollWidgetTask);
@@ -117,6 +115,9 @@ void team::on_memberclick()
 
 void team::on_taskclick()
 {
-
+    QPushButton* buttonSender = qobject_cast<QPushButton*>(sender());
+    Team team;
+    team.task.name = buttonSender->text();
+    emit _click(TEAM::taskclick , team);
 }
 

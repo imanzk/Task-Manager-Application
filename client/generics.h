@@ -69,6 +69,21 @@ public:
         return name == other.name;
     }
 };
+class Task{
+public:
+    QString name;
+    QString date;
+    QString description;
+    User user;
+    QString comment;
+    Task(QString _name){
+        name = _name;
+    }
+    Task(QString _name,QString _date){
+        name = _name; date = _date;
+    }
+    Task() = default;
+};
 class Group{
 public:
     QString name;
@@ -88,6 +103,8 @@ public:
     QString description;
     QString department;
     QString username;
+    User user;
+    Task task;
     bool available = false;
     Team(QString _name , QString _role){
         name = _name; role = _role;
@@ -112,18 +129,6 @@ public:
     }
     Project() = default;
 };
-class Task{
-public:
-    QString name;
-    QString date;
-    QString description;
-    Task(QString _name){
-        name = _name;
-    }
-    Task(QString _name,QString _date){
-        name = _name; date = _date;
-    }
-    Task() = default;
-};
+
 
 #endif // GENERICS_H

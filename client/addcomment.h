@@ -14,6 +14,10 @@ class addcomment : public QWidget
 public:
     explicit addcomment(QWidget *parent = nullptr);
     ~addcomment();
+signals:
+    void _click(QString);
+private slots:
+    void on_edit_clicked();
 
 private:
     Ui::addcomment *ui;
