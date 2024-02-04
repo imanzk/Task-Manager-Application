@@ -68,6 +68,15 @@ void SignUpPage::displayMessage(const QString stream)
 
 void SignUpPage::on_checked_stateChanged(int arg1)
 {
-    qDebug()<<arg1;
+    if(!arg1)
+        ui->PasswordLineEdit->setEchoMode(QLineEdit::Password);
+    else
+        ui->PasswordLineEdit->setEchoMode(QLineEdit::Normal);
+}
+
+
+void SignUpPage::on_PasswordLineEdit_inputRejected()
+{
+    qDebug() << "not good password";
 }
 

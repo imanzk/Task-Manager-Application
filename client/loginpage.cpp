@@ -63,3 +63,12 @@ void LogInPage::on_recovery_clicked()
     emit _click(LogIn::recovery);
 }
 
+
+void LogInPage::on_checked_stateChanged(int arg1)
+{
+    if(!arg1)
+        ui->PasswordLineEdit->setEchoMode(QLineEdit::Password);
+    else
+        ui->PasswordLineEdit->setEchoMode(QLineEdit::Normal);
+}
+

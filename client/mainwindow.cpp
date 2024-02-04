@@ -907,7 +907,7 @@ void MainWindow::get(QString str){
     }
     //gettaskteam
     else if(str.split(" ").at(0) == "gettaskteam"){
-        str.remove(0,in);
+        str.remove(0,12);
         if(str.size()==0) return;
         QStringList l = str.split(" ");
         for(int i =0 ;i < l.size() ; i+=1){

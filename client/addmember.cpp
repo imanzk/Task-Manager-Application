@@ -32,6 +32,9 @@ void addmemberClass::display(QString str)
 
 void addmemberClass::on_search_textEdited(const QString &arg1)
 {
+    if(arg1.contains(',')||arg1.contains(' ')){
+        return;
+    }
     delete scrollLayout;
     delete scrollWidget;
     scrollWidget = new QWidget(this);

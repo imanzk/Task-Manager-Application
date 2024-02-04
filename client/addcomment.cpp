@@ -15,6 +15,10 @@ addcomment::~addcomment()
 
 void addcomment::on_edit_clicked()
 {
+    if(ui->comment->toPlainText().contains(',')){
+        ui->error->setText("',' not allowed!");
+        return;
+    }
     if(ui->comment->toPlainText().isEmpty()){
         ui->error->setText("fill out the blank!");
     }else{

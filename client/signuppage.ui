@@ -179,6 +179,9 @@ background-color:rgba(255, 255, 255, .5);</string>
    <property name="text">
     <string/>
    </property>
+   <property name="frame">
+    <bool>true</bool>
+   </property>
    <property name="echoMode">
     <enum>QLineEdit::Password</enum>
    </property>
@@ -297,8 +300,7 @@ background-color:rgba(255, 255, 255, .5);</string>
     </rect>
    </property>
    <property name="styleSheet">
-    <string notr="true">border:none;
-border-radius:2px;</string>
+    <string notr="true"/>
    </property>
    <property name="text">
     <string/>

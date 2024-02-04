@@ -112,7 +112,19 @@ void aboutorganization::on_edit_clicked()
         ui->error->setText("fill out the blanks");
         return;
     }
-
+    //
+    if(ui->name->text().contains(',') || ui->name->text().contains(' ')){
+        ui->error->setText("',' or white space not allowed!");
+        return;
+    }
+    if(ui->type->text().contains(',')){
+        ui->error->setText("',' not allowed!");
+        return;
+    }
+    if(ui->description->toPlainText().contains(',')){
+        ui->error->setText("',' not allowed!");
+        return;
+    }
     org.name = ui->name->text();
     org.type = ui->type->text();
     org.description = ui->description->toPlainText();

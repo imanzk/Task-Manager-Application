@@ -1,4 +1,5 @@
 #include "mainwindow.h"
+#include "ui_mainwindow.h"
 
 void MainWindow::refresh()
 {
@@ -171,8 +172,9 @@ void MainWindow::refresh()
 
 
 MainWindow::MainWindow(QWidget *parent)
-    : QMainWindow(parent)
+    : QMainWindow(parent) , ui(new Ui::MainWindow)
 {
+    ui->setupUi(this);
     //sql
     db = QSqlDatabase::addDatabase("QSQLITE");
     QDir dir;

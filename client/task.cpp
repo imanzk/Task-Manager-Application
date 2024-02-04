@@ -105,6 +105,18 @@ void task::on_edit_clicked()
         ui->error->setText("fill out the blanks");
         return;
     }
+    if(ui->name->text().contains(',') || ui->name->text().contains(' ')){
+        ui->error->setText("',' or white space not allowed!");
+        return;
+    }
+    // if(ui->type->text().contains(',')){
+        // ui->error->setText("',' not allowed!");
+        // return;
+    // }
+    if(ui->description->toPlainText().contains(',')){
+        ui->error->setText("',' not allowed!");
+        return;
+    }
 
     task.name = ui->name->text();
     task.date = ui->date->dateTime().toString("yyyy/MM/dd-hh:mm");

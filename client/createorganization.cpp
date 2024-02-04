@@ -33,6 +33,18 @@ void createorganization::on_create_clicked()
             return;
         }
     }
+    if(data[0]->text().contains(',') || data[0]->text().contains(' ')){
+        ui->label->setText("',' or white space not allowed!");
+        return;
+    }
+    if(data[1]->text().contains(',')){
+        ui->label->setText("',' not allowed!");
+        return;
+    }
+    if(ui->description->toPlainText().contains(',')){
+        ui->label->setText("',' not allowed!");
+        return;
+    }
     org.name = data[0]->text();
     org.type = data[1]->text();
     org.description = ui->description->toPlainText();

@@ -38,6 +38,18 @@ void createtask::on_create_clicked()
             return;
         }
     }
+    if(ui->name->text().contains(',') || ui->name->text().contains(' ')){
+        ui->label->setText("',' or white space not allowed!");
+        return;
+    }
+    // if(ui->date->text().contains(',')){
+        // ui->label->setText("',' not allowed!");
+        // return;
+    // }
+    if(ui->description->toPlainText().contains(',')){
+        ui->label->setText("',' not allowed!");
+        return;
+    }
     task.name = data[0]->text();
     task.date = t.toString("yyyy/MM/dd-hh:mm");
     task.description = ui->description->toPlainText();

@@ -32,6 +32,18 @@ void createproject::on_create_clicked()
             return;
         }
     }
+    if(ui->name->text().contains(',') || ui->name->text().contains(' ')){
+        ui->label->setText("',' or white space not allowed!");
+        return;
+    }
+    if(ui->goal->text().contains(',')){
+        ui->label->setText("',' not allowed!");
+        return;
+    }
+    if(ui->description->toPlainText().contains(',')){
+        ui->label->setText("',' not allowed!");
+        return;
+    }
     group.name = data[0]->text();
     group.goal = data[1]->text();
     group.description = ui->description->toPlainText();

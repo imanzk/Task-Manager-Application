@@ -25,11 +25,12 @@ signals:
 public:
     User getUserData();
     void displayMessage(const QString);
-
+    QRegularExpressionValidator *validator;
 private slots:
     void on_OKpushButton_clicked();
     void on_CancelpushButton_clicked();
     void on_checked_stateChanged(int arg1);
+    void on_PasswordLineEdit_inputRejected();
 };
 
 #endif // SIGNUPPAGE_H

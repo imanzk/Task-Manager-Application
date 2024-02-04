@@ -12,6 +12,7 @@
 #include <QDrag>
 #include <QBrush>
 #include <QScrollBar>
+#include <QRegularExpression>
 
 namespace space {
 enum type_exception{

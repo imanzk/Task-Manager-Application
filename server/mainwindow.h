@@ -15,13 +15,17 @@
 #include <QTcpSocket>
 #include <QThread>
 
+namespace Ui{
+class MainWindow;
+}
+
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
     QSqlDatabase db;
 
 public:
-    MainWindow(QWidget *parent = nullptr);
+    explicit MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
     void refresh();
 private slots:
@@ -44,6 +48,7 @@ signals:
 
 
 private:
+    Ui::MainWindow *ui;
     QTcpServer* server;
     QVector<QTcpSocket*> connections;
 

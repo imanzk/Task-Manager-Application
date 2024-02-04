@@ -45,7 +45,18 @@ void aboutproject::on_create_clicked()
         ui->label->setText("fill out the blank");
         return;
     }
-
+    if(ui->name->text().contains(',') || ui->name->text().contains(' ')){
+        ui->label->setText("',' or white space not allowed!");
+        return;
+    }
+    if(ui->status->text().contains(',')){
+        ui->label->setText("',' not allowed!");
+        return;
+    }
+    if(ui->description->toPlainText().contains(',')){
+        ui->label->setText("',' not allowed!");
+        return;
+    }
     project.name = ui->name->text();
     project.goal = ui->status->text();
     project.description = ui->description->toPlainText();

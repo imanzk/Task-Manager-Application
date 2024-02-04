@@ -44,7 +44,18 @@ void aboutteam::on_create_clicked()
         ui->label->setText("fill out the blank");
         return;
     }
-
+    if(ui->name->text().contains(',') || ui->name->text().contains(' ')){
+        ui->label->setText("',' or white space not allowed!");
+        return;
+    }
+    if(ui->department->text().contains(',')){
+        ui->label->setText("',' not allowed!");
+        return;
+    }
+    if(ui->description->toPlainText().contains(',')){
+        ui->label->setText("',' not allowed!");
+        return;
+    }
     team.name = ui->name->text();
     team.department = ui->department->text();
     team.description = ui->description->toPlainText();
