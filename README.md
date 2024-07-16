@@ -21,3 +21,7 @@ Task Manager is built on the Qt platform and requires Qt 5.15 or higher to run. 
 ## Usage
 
 To start using Task Manager, you need to create an account and log in. You can then create your first organization , team or project, and invite other users to join. To create a task, click on the "Create Task" button and fill in the details. You can assign the task to yourself or another team member, and set a due date. You can also add comments to the task.
+
+## UML graphs of the application:
+
+To get more information, see https://github.com/imanzk/Task-Manager/blob/master/UML-graphs.pdf (Attached file).
